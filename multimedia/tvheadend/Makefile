@@ -22,6 +22,8 @@ PKG_FIXUP:=autoreconf
 
 PKG_USE_MIPS16:=0
 
+PATCH_DIR:=./files/patches
+
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 

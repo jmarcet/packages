@@ -1,0 +1,11 @@
+--- ./Makefile-orig	2016-03-14 10:10:57.000000000 +0100
++++ ./Makefile	2018-03-13 20:24:51.013927170 +0100
+@@ -28,7 +28,7 @@ PROG    := $(BUILDDIR)/tvheadend
+ #
+ 
+ CFLAGS  += -g -O2 -Wunused-result
+-CFLAGS  += -Wall -Werror -Wwrite-strings -Wno-deprecated-declarations
++CFLAGS  += -Wall -Wwrite-strings -Wno-deprecated-declarations
+ CFLAGS  += -Wmissing-prototypes
+ CFLAGS  += -fms-extensions -funsigned-char -fno-strict-aliasing
+ CFLAGS  += -D_FILE_OFFSET_BITS=64
