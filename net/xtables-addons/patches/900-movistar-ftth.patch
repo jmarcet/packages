@@ -1,0 +1,20 @@
+--- ./extensions/rtsp/nf_conntrack_rtsp.c-orig	2019-06-07 16:28:32.000000000 +0200
++++ ./extensions/rtsp/nf_conntrack_rtsp.c	2019-06-07 16:29:42.872252405 +0200
+@@ -417,7 +417,7 @@ help_out(struct sk_buff *skb, unsigned c
+ 		}
+ 
+ 		nf_ct_expect_init(rtp_exp, NF_CT_EXPECT_CLASS_DEFAULT,
+-				  nf_ct_l3num(ct), &srvaddr,
++				  nf_ct_l3num(ct), NULL, //&srvaddr,
+ 				  &ct->tuplehash[!dir].tuple.dst.u3,
+ 				  IPPROTO_UDP, NULL, &be_loport);
+ 
+@@ -434,7 +434,7 @@ help_out(struct sk_buff *skb, unsigned c
+ 			}
+ 
+ 			nf_ct_expect_init(rtcp_exp, NF_CT_EXPECT_CLASS_DEFAULT,
+-					  nf_ct_l3num(ct), &srvaddr,
++					  nf_ct_l3num(ct), NULL, //&srvaddr,
+ 					  &ct->tuplehash[!dir].tuple.dst.u3,
+ 					  IPPROTO_UDP, NULL, &be_hiport);
+ 
