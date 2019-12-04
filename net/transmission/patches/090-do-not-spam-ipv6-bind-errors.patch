@@ -1,0 +1,11 @@
+--- ./libtransmission/net.c-orig	2018-05-01 19:21:08.000000000 +0200
++++ ./libtransmission/net.c	2019-12-02 04:02:34.751276877 +0100
+@@ -283,7 +283,7 @@ tr_netOpenPeerSocket (tr_session
+     {
+         int tmperrno;
+         tmperrno = sockerrno;
+-        if ((tmperrno != ENETUNREACH && tmperrno != EHOSTUNREACH) || addr->type == TR_AF_INET)
++        if (addr->type != TR_AF_INET6 && ((tmperrno != ENETUNREACH && tmperrno != EHOSTUNREACH) || addr->type == TR_AF_INET))
+         {
+             tr_logAddError (_("Couldn't connect socket %"TR_PRI_SOCK" to %s, port %d (errno %d - %s)"),
+                             s, tr_address_to_string (addr), (int)ntohs (port), tmperrno,
