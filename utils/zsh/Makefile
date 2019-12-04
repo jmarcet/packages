@@ -47,7 +47,6 @@ define Build/Configure
 	$(call Build/Configure/Default, \
 		--disable-etcdir \
 		--disable-gdbm \
-		--disable-dynamic \
 		$(if $(CONFIG_USE_MUSL),--enable-libc-musl) \
 		--enable-pcre \
 		--enable-cap \
@@ -100,10 +99,12 @@ endef
 define Package/zsh/install
 	$(INSTALL_DIR) $(1)/bin
 	$(INSTALL_DIR) $(1)/$(CONFIGURE_PREFIX)/bin
+	$(INSTALL_DIR) $(1)/$(CONFIGURE_PREFIX)/lib/zsh/$(PKG_VERSION)
 	$(INSTALL_DIR) $(1)/$(CONFIGURE_PREFIX)/share/zsh/$(PKG_VERSION)
 
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/$(CONFIGURE_PREFIX)/bin/zsh $(1)/$(CONFIGURE_PREFIX)/bin/
-	$(CP) $(PKG_INSTALL_DIR)/$(CONFIGURE_PREFIX)/share/zsh/$(PKG_VERSION)/* $(1)/$(CONFIGURE_PREFIX)/share/zsh/$(PKG_VERSION)/
+	$(CP) -R $(PKG_INSTALL_DIR)/$(CONFIGURE_PREFIX)/lib/zsh/$(PKG_VERSION)/* $(1)/$(CONFIGURE_PREFIX)/lib/zsh/$(PKG_VERSION)/
+	$(CP) -R $(PKG_INSTALL_DIR)/$(CONFIGURE_PREFIX)/share/zsh/$(PKG_VERSION)/* $(1)/$(CONFIGURE_PREFIX)/share/zsh/$(PKG_VERSION)/
 endef
 
 define Package/zsh/postrm
