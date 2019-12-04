@@ -20,7 +20,7 @@ define Package/libcgroup
   TITLE:=CGroup config and exec library
   SECTION:=libs
   CATEGORY:=Libraries
-  DEPENDS:=+musl-fts +@KERNEL_CGROUPS
+  DEPENDS:=+USE_MUSL:musl-fts +@KERNEL_CGROUPS
 endef
 
 define Package/cgroup-tools
