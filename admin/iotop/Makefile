@@ -15,24 +15,23 @@ PKG_HASH:=3adea2a24eda49bbbaeb4e6ed2042355b441dbd7161e883067a02bfc8dcef75b
 PKG_LICENSE:=GPL
 
 include $(INCLUDE_DIR)/package.mk
-include ../python3-package.mk
+include ../../lang/python/python3-package.mk
 
 PYTHON3_PKG_SETUP_ARGS:="--optimize=1"
 
-define Package/python3-iotop
-  SECTION:=lang
-  CATEGORY:=Languages
-  SUBMENU:=Python
+define Package/iotop
+  SECTION:=admin
+  CATEGORY:=Administration
   URL:=http://guichaz.free.fr/iotop/
-  TITLE:=python3-iotop
+  TITLE:=iotop
   DEPENDS:=+python3-light
   VARIANT:=python3
 endef
 
-define Package/python3-iotop/description
+define Package/iotop/description
   Python program with a top like UI used to show of behalf of which process is the I/O going on
 endef
 
-$(eval $(call Py3Package,python3-iotop))
-$(eval $(call BuildPackage,python3-iotop))
-$(eval $(call BuildPackage,python3-iotop-src))
+$(eval $(call Py3Package,iotop))
+$(eval $(call BuildPackage,iotop))
+$(eval $(call BuildPackage,iotop-src))
