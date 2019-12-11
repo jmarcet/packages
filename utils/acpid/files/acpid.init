@@ -20,6 +20,6 @@ boot() {
 }
 
 stop() {
-	service_kill ${ACPID_BIN##*/} $ACPID_PID
+	pkill -f "$ACPID_BIN"
 	rm -f $ACPID_PID
 }
