@@ -53,12 +53,24 @@ $(call Package/tor/Default)
   VARIANT:=full
 endef
 
+define Package/tor-seccomp
+$(call Package/tor/Default)
+  TITLE:=An anonymous Internet communication system with seccomp sandboxing
+  DEPENDS:=\
+	+libevent2 +libopenssl +libpthread +librt +zlib +libcap \
+	+libseccomp @(aarch64||arm||x86_64)
+  VARIANT:=seccomp
+  PROVIDES:=tor
+endef
+
 define Package/tor/description
 $(call Package/tor/Default/description)
 
 This package contains the full tor daemon.
 
 endef
+
+Package/tor-seccomp/description = $(Package/tor/description)
 
 define Package/tor-basic
 $(call Package/tor/Default)
@@ -120,6 +132,7 @@ define Package/tor/conffiles
 endef
 
 Package/tor-basic/conffiles = $(Package/tor/conffiles)
+Package/tor-seccomp/conffiles = $(Package/tor/conffiles)
 
 CONFIGURE_ARGS += \
 	--with-libevent-dir="$(STAGING_DIR)/usr" \
@@ -128,7 +141,6 @@ CONFIGURE_ARGS += \
 	--disable-asciidoc \
 	--disable-html-manual \
 	--disable-manpage \
-	--disable-seccomp \
 	--disable-libscrypt \
 	--disable-unittests \
 	--disable-lzma \
@@ -136,6 +148,12 @@ CONFIGURE_ARGS += \
 	--with-tor-user=tor \
 	--with-tor-group=tor \
 	--enable-pic
+
+ifeq ($(BUILD_VARIANT),seccomp)
+CONFIGURE_ARGS += --enable-seccomp
+else
+CONFIGURE_ARGS += --disable-seccomp
+endif
 
 ifeq ($(BUILD_VARIANT),basic)
   CONFIGURE_ARGS += --disable-module-relay
@@ -160,6 +178,7 @@ define Package/tor/install
 endef
 
 Package/tor-basic/install = $(Package/tor/install)
+Package/tor-seccomp/install = $(Package/tor/install)
 
 define Package/tor-gencert/install
 	$(INSTALL_DIR) $(1)/usr/sbin
