@@ -157,8 +157,9 @@ diff -X /home/jmarcet/.rsync-filter -pru ./etc/profile-templates/all/all/nssdata
 @@ -4,4 +4,4 @@
  passwd
  shadow
- group
+-group
 -gshadow
++#group
 +#gshadow
 diff -X /home/jmarcet/.rsync-filter -pru ./etc/profile-templates/buildd/all/nssdatabases ./etc/profile-templates/buildd/all/nssdatabases
 --- ./etc/profile-templates/buildd/all/nssdatabases	2018-11-03 14:26:12.000000000 +0100
@@ -166,8 +167,9 @@ diff -X /home/jmarcet/.rsync-filter -pru ./etc/profile-templates/buildd/all/nssd
 @@ -4,4 +4,4 @@
  passwd
  shadow
- group
+-group
 -gshadow
++#group
 +#gshadow
 diff -X /home/jmarcet/.rsync-filter -pru ./etc/profile-templates/default/all/nssdatabases ./etc/profile-templates/default/all/nssdatabases
 --- ./etc/profile-templates/default/all/nssdatabases	2018-11-03 14:26:12.000000000 +0100
