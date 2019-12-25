@@ -1,0 +1,8 @@
+menu "Select libtirpc configuration options"
+        depends on PACKAGE_libtirpc
+
+config PACKAGE_LIBTIRPC_KRB5
+	bool "Include support for krb5"
+	default n
+
+endmenu
