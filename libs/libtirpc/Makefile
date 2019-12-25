@@ -23,10 +23,16 @@ define Package/libtirpc
   CATEGORY:=Libraries
   TITLE:=Library TI RPC for RPC bindings
   URL:=http://libtirpc.sourceforge.net/
-  DEPENDS:=+libpthread
+  DEPENDS:=+libpthread +PACKAGE_LIBTIRPC_KRB5:libcomerr +PACKAGE_LIBTIRPC_KRB5:krb5-libs
 endef
 
-CONFIGURE_ARGS += --disable-gssapi
+define Package/libtirpc/config
+        source "$(SOURCE)/Config.in"
+endef
+
+
+CONFIGURE_VARS += $(if $(CONFIG_PACKAGE_LIBTIRPC_KRB5),KRB5_CONFIG=$(STAGING_DIR)/usr/bin/krb5-config)
+CONFIGURE_ARGS += $(if $(CONFIG_PACKAGE_LIBTIRPC_KRB5),--enable,--disable)-gssapi
 HOST_CONFIGURE_ARGS += --disable-gssapi
 
 TARGET_CFLAGS += -DGQ
