@@ -5,4 +5,9 @@ config NFS_KERNEL_SERVER_V4
 	bool "Include support for NFSv4"
 	default y
 
+config NFS_KERNEL_SERVER_KRB5
+	bool "Include support for krb5"
+	select PACKAGE_LIBTIRPC_KRB5
+	default n
+
 endmenu
