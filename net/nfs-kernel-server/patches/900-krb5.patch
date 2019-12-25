@@ -1,0 +1,14 @@
+--- ./configure-orig	2019-06-10 16:38:01.000000000 +0200
++++ ./configure	2019-12-25 17:07:05.877892857 +0100
+@@ -19992,10 +19992,7 @@ cat >>confdefs.h <<_ACEOF
+ _ACEOF
+ 
+       if test -f $dir/include/gssapi/gssapi_krb5.h -a \
+-                \( -f $dir/lib/libgssapi_krb5.a -o \
+-                   -f $dir/lib64/libgssapi_krb5.a -o \
+-                   -f $dir/lib64/libgssapi_krb5.so -o \
+-                   -f $dir/lib/libgssapi_krb5.so \) ; then
++                \( -f $dir/lib/libgssapi_krb5.so \) ; then
+ 
+ $as_echo "#define HAVE_KRB5 1" >>confdefs.h
+ 
