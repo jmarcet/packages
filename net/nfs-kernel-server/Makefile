@@ -32,7 +32,7 @@ define Package/nfs-kernel-server/Default
 	SECTION:=net
 	CATEGORY:=Network
 	SUBMENU:=Filesystem
-	DEPENDS:=+libwrap +libblkid +libuuid +libtirpc
+	DEPENDS:=+libwrap +libblkid +libuuid +libtirpc +libsqlite3
 	URL:=http://nfs.sourceforge.net/
 	MAINTAINER:=Peter Wagner <tripolar@gmx.at>
 endef
@@ -105,13 +105,14 @@ TARGET_LDFLAGS += -Wl,-rpath-link=$(STAGING_DIR)/usr/lib \
 
 CONFIGURE_ARGS += \
 	--disable-caps \
-	--disable-nfsdcld \
-	--disable-nfsdcltrack \
 	--enable-shared \
 	--enable-static \
 	--with-rpcgen=internal \
 	$(if $(CONFIG_NFS_KERNEL_SERVER_KRB5),--with-krb5=$(STAGING_DIR)/usr) \
 	$(if $(CONFIG_NFS_KERNEL_SERVER_KRB5),--enable,--disable)-gss \
+	$(if $(CONFIG_NFS_KERNEL_SERVER_KRB5),--enable,--disable)-nfsdcld \
+	$(if $(CONFIG_NFS_KERNEL_SERVER_KRB5),--enable,--disable)-nfsdcltrack \
+	$(if $(CONFIG_NFS_KERNEL_SERVER_KRB5),--enable,--disable)-svcgss \
 	$(if $(CONFIG_NFS_KERNEL_SERVER_V4),--enable,--disable)-nfsv4 \
 	$(if $(CONFIG_NFS_KERNEL_SERVER_V4),--enable,--disable)-nfsv41
 
@@ -122,9 +123,7 @@ endif
 CONFIGURE_VARS += \
 	libblkid_cv_is_recent=yes \
 	ac_cv_lib_resolv___res_querydomain=yes \
-	ac_cv_lib_bsd_daemon=no \
-	CONFIG_SQLITE3_TRUE="\#" \
-	CONFIG_NFSDCLD_TRUE="\#"
+	ac_cv_lib_bsd_daemon=no
 
 MAKE_FLAGS += \
 	OPT="$(TARGET_CFLAGS)" \
@@ -168,21 +167,30 @@ define Host/Install
 endef
 
 define Package/nfs-kernel-server/install
-	$(INSTALL_DIR) $(1)/etc/init.d $(1)/usr/sbin
+	$(INSTALL_DIR) $(1)/etc/init.d $(1)/sbin $(1)/usr/sbin $(1)/usr/lib/libnfsidmap
 	$(INSTALL_DATA) ./files/nfsd.exports $(1)/etc/exports
-	$(INSTALL_BIN) ./files/nfsd.init $(1)/etc/init.d/nfsd
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/utils/statd/sm-notify $(1)/usr/sbin/
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/utils/statd/statd $(1)/usr/sbin/rpc.statd
-	$(if $(CONFIG_NFS_KERNEL_SERVER_KRB5),$(INSTALL_BIN) $(PKG_BUILD_DIR)/utils/gssd/gssd $(1)/usr/sbin/rpc.gssd)
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/utils/nfsd/nfsd $(1)/usr/sbin/rpc.nfsd
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/utils/mountd/mountd $(1)/usr/sbin/rpc.mountd
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/utils/exportfs/exportfs $(1)/usr/sbin/
+	$(if $(CONFIG_NFS_KERNEL_SERVER_KRB5), \
+		$(INSTALL_BIN) ./files/nfsd-krb5.init $(1)/etc/init.d/nfsd, \
+		$(INSTALL_BIN) ./files/nfsd.init $(1)/etc/init.d/nfsd)
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/sm-notify $(1)/usr/sbin/sm-notify
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/rpc.statd $(1)/usr/sbin/rpc.statd
+	$(if $(CONFIG_NFS_KERNEL_SERVER_KRB5),$(CP) $(PKG_INSTALL_DIR)/usr/lib/libnfsidmap/*.so $(1)/usr/lib/libnfsidmap/)
+	$(if $(CONFIG_NFS_KERNEL_SERVER_KRB5),$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/rpc.idmapd $(1)/usr/sbin/rpc.idmapd)
+	$(if $(CONFIG_NFS_KERNEL_SERVER_KRB5),$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/rpc.gssd $(1)/usr/sbin/rpc.gssd)
+	$(if $(CONFIG_NFS_KERNEL_SERVER_KRB5),$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/rpc.svcgssd $(1)/usr/sbin/rpc.svcgssd)
+	$(if $(CONFIG_NFS_KERNEL_SERVER_KRB5),$(INSTALL_BIN) $(PKG_INSTALL_DIR)/sbin/nfsdcld $(1)/sbin/nfsdcld)
+	$(if $(CONFIG_NFS_KERNEL_SERVER_KRB5),$(INSTALL_BIN) $(PKG_INSTALL_DIR)/sbin/nfsdcltrack $(1)/sbin/nfsdcltrack)
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/rpc.nfsd $(1)/usr/sbin/rpc.nfsd
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/rpc.mountd $(1)/usr/sbin/rpc.mountd
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/exportfs $(1)/usr/sbin/
 endef
 
 define Package/nfs-kernel-server-utils/install
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/utils/showmount/showmount $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/utils/nfsstat/nfsstat $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/showmount $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/nfsconf $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/nfsiostat $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/nfsstat $(1)/usr/sbin
 endef
 
 define Package/nfs-utils/InstallDev
