@@ -12,3 +12,27 @@
  
  $as_echo "#define HAVE_KRB5 1" >>confdefs.h
  
+--- ./utils/nfsdcld/legacy.c-orig	2019-06-10 16:34:37.000000000 +0200
++++ ./utils/nfsdcld/legacy.c	2019-12-26 14:00:09.949758475 +0100
+@@ -31,6 +31,10 @@
+ 
+ #define NFSD_RECDIR_FILE "/proc/fs/nfsd/nfsv4recoverydir"
+ 
++#ifndef PATH_MAX
++#define PATH_MAX 4096
++#endif
++
+ /*
+  * Loads client records from the v4recovery directory into the database.
+  * Records are prefixed with the string "hash:" and include the '\0' byte.
+--- ./utils/idmapd/idmapd.c-orig	2019-06-10 16:34:37.000000000 +0200
++++ ./utils/idmapd/idmapd.c	2019-12-26 14:43:39.697981705 +0100
+@@ -88,7 +88,7 @@
+ #endif
+ 
+ #ifndef NFS4NOBODY_GROUP
+-#define NFS4NOBODY_GROUP "nobody"
++#define NFS4NOBODY_GROUP "nogroup"
+ #endif
+ 
+ /* From Niels */
