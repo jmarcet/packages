@@ -1,5 +1,4 @@
 menu "Configuration"
-	depends on PACKAGE_schroot
 
 config SCHROOT_BTRFS
 	bool "Enable support for btrfs snapshots"
