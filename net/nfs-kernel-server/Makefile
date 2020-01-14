@@ -22,8 +22,7 @@ PKG_BUILD_DEPENDS:=$(PKG_NAME)/host libevent2
 HOST_BUILD_DEPENDS:=libtirpc/host
 
 PKG_CONFIG_DEPENDS:= \
-	CONFIG_IPV6 \
-	CONFIG_NFS_KERNEL_SERVER_V4
+	CONFIG_IPV6
 
 include $(INCLUDE_DIR)/host-build.mk
 include $(INCLUDE_DIR)/package.mk
