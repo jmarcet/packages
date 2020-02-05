@@ -3,4 +3,4 @@
 [ "$ACTION" = "reload" ] || exit 0
 
 logger -t "vpn-policy-routing" "Reloading vpn-policy-routing due to $ACTION of firewall"
-/etc/init.d/vpn-policy-routing reload
+pgrep vpn-policy-routing &>/dev/null && /etc/init.d/vpn-policy-routing reload
