@@ -1,3 +1,6 @@
+#
+# Copyright (C) 2020 OpenWrt.org
+#
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
 #
@@ -5,15 +8,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=docker-compose
-PKG_VERSION:=1.25.0
+PKG_VERSION:=1.25.4
 PKG_RELEASE:=1
 
-PYPI_NAME:=$(PKG_NAME)
-PKG_HASH:=2c5fcbfd3ff445b6f3eebb549cb167ef1d8f70c5806aab8f309fc8fa74cd977e
+PYPI_NAME:=docker-compose
+PKG_HASH:=fabae2bee4abfa7bdd09125b6bbdcdda81f946c7b16e3ccc6bb2d821ef6488f3
 
-PKG_LICENSE:=Apache-2.0
-PKG_LICENSE_FILES:=PKG-INFO
 PKG_MAINTAINER:=Javier Marcet <javier@marcet.info>
+PKG_LICENSE:=Apache-2.0
+PKG_LICENSE_FILES:=LICENSE
 
 include ../pypi.mk
 include $(INCLUDE_DIR)/package.mk
@@ -26,7 +29,7 @@ define Package/docker-compose
   CATEGORY:=Languages
   SUBMENU:=Python
   TITLE:=Docker Compose
-  URL:=https://www.docker.com/
+  URL:=https://github.com/docker/compose
   DEPENDS+= +docker-ce \
       +PACKAGE_docker-compose:python3 \
       +PACKAGE_docker-compose:python3-cached-property \
@@ -47,7 +50,7 @@ define Package/docker-compose
       +PACKAGE_docker-compose:python3-six \
       +PACKAGE_docker-compose:python3-texttable \
       +PACKAGE_docker-compose:python3-websocket-client \
-      +PACKAGE_docker-compose:python3-yaml-3
+      +PACKAGE_docker-compose:python3-yaml
   VARIANT:=python3
 endef
 
