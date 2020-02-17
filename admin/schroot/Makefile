@@ -1,45 +1,39 @@
-#
-# Copyright (C) 2019 Javier Marcet <javier@marcet.info>
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
-
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=schroot
-PKG_REV:=2ba1e043dbd65c8f08d1d4821393b099af05af15
-PKG_VERSION:=1.6.10
 PKG_RELEASE:=1
-
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
-PKG_SOURCE_URL:=https://salsa.debian.org/debian/schroot
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=$(PKG_REV)
-
-PKG_LICENSE:=GPL
+PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=COPYING
+
+PKG_VERSION:=1.6.10
+PKG_SOURCE:=$(PKG_NAME)_$(PKG_VERSION).orig.tar.xz
+PKG_SOURCE_URL:=http://deb.debian.org/debian/pool/main/s/schroot
+PKG_HASH:=3ce8dfd9cb97b099e4b6d4ccec421d6cc8c9ef84574681e928a12badb5643d0b
+
+PKG_MAINTAINER:=Javier Marcet <javier@marcet.info>
 
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
-PKG_FIXUP:=autoreconf gettext-version
-PKG_BUILD_DEPENDS:=gettext
+PKG_FIXUP:=autoreconf
 
-include $(INCLUDE_DIR)/autotools.mk
+include $(INCLUDE_DIR)/nls.mk
 include $(INCLUDE_DIR)/package.mk
 
 define Package/schroot
   SECTION:=admin
   CATEGORY:=Administration
   TITLE:=Securely enter a chroot and run a command or login shell.
-  DEPENDS:=+boost +boost-filesystem +boost-iostreams +boost-program_options +boost-regex +libstdcpp \
-	+SCHROOT_BTRFS:btrfs-progs +SCHROOT_LOOPBACK:losetup +SCHROOT_LVM:lvm2 +SCHROOT_UUID:libuuid
+  DEPENDS:=@!mips \
+	+boost +boost-filesystem +boost-iostreams +boost-program_options +boost-regex \
+	+SCHROOT_BTRFS:btrfs-progs \
+	+SCHROOT_LOOPBACK:losetup \
+	+SCHROOT_LVM:lvm2 \
+	+SCHROOT_UUID:libuuid
   URL:=https://salsa.debian.org/debian/schroot
 endef
 
 define Package/schroot/description
-Securely enter a chroot and run a command or login shell.
+  Securely enter a chroot and run a command or login shell.
 endef
 
 define Package/sudo/conffiles
@@ -57,6 +51,10 @@ PKG_CONFIG_DEPENDS := \
 	CONFIG_SCHROOT_UUID
 
 CONFIGURE_ARGS += \
+	$(if $(CONFIG_SCHROOT_BTRFS),--enable,--disable)-btrfs-snapshot \
+	$(if $(CONFIG_SCHROOT_LOOPBACK),--enable,--disable)-loopback \
+	$(if $(CONFIG_SCHROOT_LVM),--enable,--disable)-lvm-snapshot \
+	$(if $(CONFIG_SCHROOT_UUID),--enable,--disable)-uuid \
 	--enable-block-device \
 	--enable-union \
 	--disable-dchroot \
@@ -67,31 +65,6 @@ CONFIGURE_ARGS += \
 	--disable-doxygen \
 	--disable-rpath
 
-ifeq ($(CONFIG_SCHROOT_BTRFS),)
-CONFIGURE_ARGS += --disable-btrfs-snapshot
-else
-CONFIGURE_ARGS += --enable-btrfs-snapshot
-endif
-
-ifeq ($(CONFIG_SCHROOT_LOOPBACK),)
-CONFIGURE_ARGS += --disable-loopback
-else
-CONFIGURE_ARGS += --enable-loopback
-endif
-
-ifeq ($(CONFIG_SCHROOT_LVM),)
-CONFIGURE_ARGS += --disable-lvm-snapshot
-else
-CONFIGURE_ARGS += --enable-lvm-snapshot
-endif
-
-ifeq ($(CONFIG_SCHROOT_UUID),)
-CONFIGURE_ARGS += --disable-uuid
-else
-CONFIGURE_ARGS += --enable-uuid
-endif
-
-TARGET_CXXFLAGS += -I$(STAGING_DIR)/usr/lib/libintl-stub/include -fpermissive
 TARGET_LDFLAGS += -L$(STAGING_DIR)/usr/lib/libintl-stub/lib
 
 define Package/schroot/install
