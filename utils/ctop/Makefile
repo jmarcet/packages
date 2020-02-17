@@ -1,17 +1,16 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ctop
+PKG_VERSION:=0.7.3
 PKG_RELEASE:=1
-PKG_LICENSE:=MIT
-PKG_LICENSE_FILES:=LICENSE
 
-PKG_SOURCE_URL:=https://github.com/bcicen/ctop
-PKG_MIRROR_HASH:=f2b5b50ab8bf67b83f864f85b732bfbeaafb3dbb6c561a05c218418535dafd69
-PKG_SOURCE_VERSION:=9dd12103fc9ef78a80f90b7142b2140c33739fee
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2019-12-30
+PKG_SOURCE:=v$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://github.com/bcicen/ctop/archive
+PKG_HASH:=3b083b55a7cda7782e370bf03412dbf51ca4a94c1d56325ff70a1545d7a30adc
 
 PKG_MAINTAINER:=Javier Marcet <javier@marcet.info>
+PKG_LICENSE:=MIT
+PKG_LICENSE_FILES:=LICENSE
 
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
@@ -26,11 +25,11 @@ define Package/ctop
   CATEGORY:=Utilities
   TITLE:=Top-like interface for container metrics
   URL:=https://ctop.sh/
-  DEPENDS:=$(GO_ARCH_DEPENDS)
+  DEPENDS:=$(GO_ARCH_DEPENDS) @!mips
 endef
 
 define Package/ctop/description
-Top-like interface for container metrics
+  Top-like interface for container metrics
 endef
 
 MAKE_PATH:=$(GO_PKG_WORK_DIR_NAME)/build/src/$(GO_PKG)
