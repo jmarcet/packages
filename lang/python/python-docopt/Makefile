@@ -23,7 +23,7 @@ define Package/python3-docopt
   SUBMENU:=Python
   TITLE:=Pythonic argument parser, that will make you smile
   URL:=http://docopt.org/
-  DEPENDS:=+python3-light +python3-setuptools
+  DEPENDS:=+python3-light
   VARIANT:=python3
 endef
 
