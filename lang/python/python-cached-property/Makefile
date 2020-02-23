@@ -23,7 +23,7 @@ define Package/python3-cached-property
   SUBMENU:=Python
   TITLE:=A decorator for caching properties in classes
   URL:=https://github.com/pydanny/cached-property
-  DEPENDS:=+python3-light +python3-setuptools
+  DEPENDS:=+python3-light
   VARIANT:=python3
 endef
 

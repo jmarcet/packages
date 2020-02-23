@@ -19,9 +19,9 @@ define Package/python3-texttable
   SECTION:=lang
   CATEGORY:=Languages
   SUBMENU:=Python
-  TITLE:=module for creating simple ASCII tables
+  TITLE:=Module for creating simple ASCII tables
   URL:=https://github.com/foutaise/texttable/
-  DEPENDS:=+python3-light +python3-setuptools
+  DEPENDS:=+python3-light
   VARIANT:=python3
 endef
 

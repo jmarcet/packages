@@ -21,12 +21,15 @@ define Package/python3-websocket-client
   SUBMENU:=Python
   TITLE:=WebSocket client for Python. hybi13 is supported
   URL:=https://github.com/websocket-client/websocket-client
-  DEPENDS:=+python3-light +python3-setuptools +python3-six
+  DEPENDS:=+python3-light +python3-six
   VARIANT:=python3
 endef
 
 define Package/python3-websocket-client/description
-  WebSocket client for Python. hybi13 is supported
+  websocket-client module is WebSocket client for python. This provide the low
+  level APIs for WebSocket. All APIs are the synchronous functions.
+
+  websocket-client supports only hybi-13.
 endef
 
 $(eval $(call Py3Package,python3-websocket-client))
