@@ -1,0 +1,56 @@
+--- ./extensions/rtsp/nf_nat_rtsp.c-orig	2020-03-01 01:40:07.000000000 +0100
++++ ./extensions/rtsp/nf_nat_rtsp.c	2020-03-01 01:45:41.636314547 +0100
+@@ -202,7 +202,7 @@ rtsp_mangle_tran(enum ip_conntrack_info
+ 	case pb_single:
+ 		for (loport = prtspexp->loport; loport != 0; loport++) { /* XXX: improper wrap? */
+ 			rtp_t->dst.u.udp.port = htons(loport);
+-			if (nf_ct_expect_related(rtp_exp) == 0) {
++			if (nf_ct_expect_related(rtp_exp, 0) == 0) {
+ 				pr_debug("using port %hu\n", loport);
+ 				break;
+ 			}
+@@ -215,12 +215,12 @@ rtsp_mangle_tran(enum ip_conntrack_info
+ 	case pb_range:
+ 		for (loport = prtspexp->loport; loport != 0; loport += 2) { /* XXX: improper wrap? */
+ 			rtp_t->dst.u.udp.port = htons(loport);
+-			if (nf_ct_expect_related(rtp_exp) != 0) {
++			if (nf_ct_expect_related(rtp_exp, 0) != 0) {
+ 				continue;
+ 			}
+ 			hiport = loport + 1;
+ 			rtcp_exp->tuple.dst.u.udp.port = htons(hiport);
+-			if (nf_ct_expect_related(rtcp_exp) != 0) {
++			if (nf_ct_expect_related(rtcp_exp, 0) != 0) {
+ 				nf_ct_unexpect_related(rtp_exp);
+ 				continue;
+ 			}
+@@ -243,14 +243,14 @@ rtsp_mangle_tran(enum ip_conntrack_info
+ 	case pb_discon:
+ 		for (loport = prtspexp->loport; loport != 0; loport++) { /* XXX: improper wrap? */
+ 			rtp_t->dst.u.udp.port = htons(loport);
+-			if (nf_ct_expect_related(rtp_exp) == 0) {
++			if (nf_ct_expect_related(rtp_exp, 0) == 0) {
+ 				pr_debug("using port %hu (1 of 2)\n", loport);
+ 				break;
+ 			}
+ 		}
+ 		for (hiport = prtspexp->hiport; hiport != 0; hiport++) { /* XXX: improper wrap? */
+ 			rtp_t->dst.u.udp.port = htons(hiport);
+-			if (nf_ct_expect_related(rtp_exp) == 0) {
++			if (nf_ct_expect_related(rtp_exp, 0) == 0) {
+ 				pr_debug("using port %hu (2 of 2)\n", hiport);
+ 				break;
+ 			}
+--- ./extensions/rtsp/nf_conntrack_rtsp.c-orig	2020-03-01 01:46:49.000000000 +0100
++++ ./extensions/rtsp/nf_conntrack_rtsp.c	2020-03-01 01:48:32.580488452 +0100
+@@ -466,8 +466,8 @@ help_out(struct sk_buff *skb, unsigned c
+ 					  &expinfo, rtp_exp, rtcp_exp);
+ #endif
+ 		else {
+-			if (nf_ct_expect_related(rtp_exp) == 0) {
+-				if (rtcp_exp && nf_ct_expect_related(rtcp_exp) != 0) {
++			if (nf_ct_expect_related(rtp_exp, 0) == 0) {
++				if (rtcp_exp && nf_ct_expect_related(rtcp_exp, 0) != 0) {
+ 					nf_ct_unexpect_related(rtp_exp);
+ 					pr_info("nf_conntrack_expect_related failed for rtcp\n");
+ 					ret = NF_DROP;

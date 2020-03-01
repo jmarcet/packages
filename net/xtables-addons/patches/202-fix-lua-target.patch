@@ -1,0 +1,20 @@
+--- ./extensions/LUA/xt_LUA_target.c-orig	2020-02-29 22:47:37.000000000 +0100
++++ ./extensions/LUA/xt_LUA_target.c	2020-03-01 01:35:34.843355945 +0100
+@@ -79,7 +79,7 @@ lua_tg(struct sk_buff *pskb, const struc
+ 
+ 	L = lua_envs[info->state_id]->L;
+ 
+-	if (!skb_make_writable(pskb, pskb->len))
++	if (!skb_try_make_writable(pskb, pskb->len))
+ 		return NF_DROP;
+ 
+ 	/* call the function provided by --function parameter or the default 'process_packet' defined in Lua */
+@@ -136,7 +136,7 @@ static bool load_script_into_state(uint3
+ 	int32_t ret;
+ 	struct lua_env * env = kmalloc(sizeof(struct lua_env), GFP_KERNEL);
+ 
+-	if (!script_size > 0) {
++	if (!(script_size > 0)) {
+ 		pr_debug("LUA [%d]: script_size %lu < 0\n", state_id, script_size);
+ 		return false;
+ 	}
