@@ -92,7 +92,7 @@
 	#local master = no
 
 	## (auto, yes) If this is set to yes, on startup, nmbd will force an election, and it will have a slight advantage in winning the election. It is recommended that this parameter is used in conjunction with domain master = yes, so that nmbd can guarantee becoming a domain master. 
-	#preferred master = yes
+	preferred master = yes
 
 	## (445 139) Specifies which ports the server should listen on for SMB traffic.
 	## 139 is netbios/nmbd
@@ -107,7 +107,7 @@
 
 ################ Filesystem and creation rules ################
 	## reported filesystem type (NTFS,Samba,FAT)
-	#fstype = FAT
+	fstype = NTFS
 
 	## Allows a user who has write access to the file (by whatever means, including an ACL permission) to modify the permissions (including ACL) on it.
 	#dos filemode = Yes
