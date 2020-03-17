@@ -122,9 +122,9 @@ pre_checks()
     done
 
     iptables -I input_rule -p tcp --dport 80 -j ACCEPT -m comment --comment "ACME" || return 1
-    ip6tables -I input_rule -p tcp --dport 80 -j ACCEPT -m comment --comment "ACME" || return 1
+    #ip6tables -I input_rule -p tcp --dport 80 -j ACCEPT -m comment --comment "ACME" || return 1
     debug "v4 input_rule: $(iptables -nvL input_rule)"
-    debug "v6 input_rule: $(ip6tables -nvL input_rule)"
+    #debug "v6 input_rule: $(ip6tables -nvL input_rule)"
     return 0
 }
 
@@ -134,7 +134,7 @@ post_checks()
     # The comment ensures we only touch our own rules. If no rules exist, that
     # is fine, so hide any errors
     iptables -D input_rule -p tcp --dport 80 -j ACCEPT -m comment --comment "ACME" 2>/dev/null
-    ip6tables -D input_rule -p tcp --dport 80 -j ACCEPT -m comment --comment "ACME" 2>/dev/null
+    #ip6tables -D input_rule -p tcp --dport 80 -j ACCEPT -m comment --comment "ACME" 2>/dev/null
 
     if [ -e /etc/init.d/uhttpd ] && ( [ -n "$UHTTPD_LISTEN_HTTP" ] || [ "$UPDATE_UHTTPD" -eq 1 ] ); then
         if [ -n "$UHTTPD_LISTEN_HTTP" ]; then
