@@ -23,12 +23,17 @@ define Package/python3-docker
   SUBMENU:=Python
   TITLE:=A Python library for the Docker Engine API
   URL:=https://github.com/docker/docker-py
-  DEPENDS:=+python3-light +python3-paramiko +python3-six
+  DEPENDS:=\
+	  +python3-light +python3-distutils +python3-logging \
+	  +python3-openssl +python3-paramiko +python3-six +python3-requests \
+	  +python3-websocket-client
   VARIANT:=python3
 endef
 
 define Package/python3-docker/description
-  A Python library for the Docker Engine API
+  A Python library for the Docker Engine API. It lets you do anything the
+  docker command does, but from within Python apps – run containers manage
+  containers, manage Swarms, etc.
 endef
 
 $(eval $(call Py3Package,python3-docker))
