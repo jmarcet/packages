@@ -23,7 +23,7 @@ define Package/python3-dockerpty
   SUBMENU:=Python
   TITLE:=Python library to use the pseudo-tty of a docker container
   URL:=https://github.com/d11wtq/dockerpty
-  DEPENDS:=+python3-light +python3-docker +python3-six
+  DEPENDS:=+python3-light +python3-openssl +python3-six
   VARIANT:=python3
 endef
 

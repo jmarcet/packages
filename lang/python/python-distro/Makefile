@@ -21,7 +21,7 @@ define Package/python3-distro
   SUBMENU:=Python
   TITLE:=Distro - an OS platform information API
   URL:=https://github.com/nir0s/distro
-  DEPENDS:=+python3-light
+  DEPENDS:=+python3-light +python3-logging
   VARIANT:=python3
 endef
 
