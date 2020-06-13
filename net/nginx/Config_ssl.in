@@ -226,6 +226,14 @@ config NGINX_HTTP_BROTLI
 		Add support for brotli compression module.
 	default n
 
+config NGINX_HTTP_GEOIP2
+	bool
+	prompt "Enable HTTP GeoIP2 module"
+	help
+		Add support for MaxMind GeoIP2 database module.
+	select PACKAGE_libmaxminddb
+	default n
+
 config NGINX_STREAM_CORE_MODULE
 	bool
 	prompt "Enable stream support"
