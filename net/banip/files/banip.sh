@@ -121,9 +121,7 @@ f_envload()
 		ban_target_dst_6="${ban_log_chain_dst}"
 	fi
 
-	# log daemon check
-	#
-	if [ "$(/etc/init.d/log running; printf "%u" "${?}")" -eq 1 ]
+	if [ "$(/etc/init.d/syslog-ng running; printf "%u" "${?}")" -eq 1 ]
 	then
 		unset ban_logger
 		f_log "info" "your log daemon 'logd' is not running, please enable 'logd' to use this service"
