@@ -17,7 +17,7 @@ define Package/banip
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=Ban incoming and/or outgoing ip adresses via ipsets
-	DEPENDS:=+jshn +jsonfilter +ip +ipset +iptables +ca-bundle +logd
+	DEPENDS:=+jshn +jsonfilter +ip +ipset +iptables +ca-bundle
 	PKGARCH:=all
 endef
 
