@@ -8,12 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=htop
-PKG_VERSION:=2.2.0
-PKG_RELEASE:=2
+PKG_RELEASE:=1
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://hisham.hm/htop/releases/$(PKG_VERSION)/
-PKG_HASH:=d9d6826f10ce3887950d709b53ee1d8c1849a70fa38e91d5896ad8cbc6ba3c57
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://github.com/hishamhm/htop
+PKG_SOURCE_VERSION:=402e46bb82964366746b86d77eb5afa69c279539
+PKG_SOURCE_DATE:=2019-02-10
+PKG_MIRROR_HASH:=3a3de3f172f3ce42de35180f48c3fe727bbe1358931d68a4dff9027ad55781b3
 
 PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=COPYING
@@ -46,6 +47,11 @@ CONFIGURE_ARGS += \
 CONFIGURE_VARS += \
 	ac_cv_file__proc_stat=yes \
 	ac_cv_file__proc_meminfo=yes
+
+define Build/Configure
+	( cd $(PKG_BUILD_DIR); ./autogen.sh )
+	$(call Build/Configure/Default)
+endef
 
 define Package/htop/install
 	$(INSTALL_DIR) $(1)/usr/bin
