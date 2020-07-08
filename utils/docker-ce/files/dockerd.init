@@ -125,7 +125,7 @@ process_config() {
 
 	config_get alt_config_file globals alt_config_file
 	[ -n "$alt_config_file" ] && [ -f "$alt_config_file" ] && {
-		ln -s "$alt_config_file" "$DOCKERD_CONF"
+		DOCKERD_CONF="$alt_config_file"
 		return 0
 	}
 
