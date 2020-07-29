@@ -312,8 +312,7 @@ define Package/nginx-mod-luci
   TITLE:=Support file for Nginx
   URL:=http://nginx.org/
   DEPENDS:=+uwsgi +uwsgi-luci-support +nginx
-  # TODO: add PROVIDES when removing nginx-mod-luci-ssl
-  # PROVIDES:=nginx-mod-luci-ssl
+  PROVIDES:=nginx-mod-luci-ssl
 endef
 
 define Package/nginx-mod-luci/description
@@ -556,7 +555,7 @@ $(eval $(call BuildPackage,nginx-mod-luci))
 
 # TODO: remove after a transition period (together with pkg nginx-util):
 # It is for smoothly substituting nginx and nginx-mod-luci-ssl (by nginx-ssl
-# respectively nginx-mod-luci). Add above commented PROVIDES when removing.
+# respectively nginx-mod-luci).
 
 Package/nginx = $(Package/nginx-ssl)
 
