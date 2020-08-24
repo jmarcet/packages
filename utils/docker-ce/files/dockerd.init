@@ -212,10 +212,10 @@ ip4tables_remove() {
 }
 
 stop_service() {
+	docker update --restart=no $(docker ps -a -q)
+	sync; sleep 1; sync
 	if /etc/init.d/dockerd running; then
 		service_stop "/usr/bin/dockerd"
 		ip4tables_remove
 	fi
-	docker update --restart=no $(docker ps -a -q)
-	sync; sleep 1; sync
 }
