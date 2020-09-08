@@ -35,14 +35,14 @@ PKG_CONFIG_DEPENDS:= \
 COLLECTD_PLUGINS_DISABLED:= \
 	amqp \
 	amqp1 \
+	apache \
+	apcups \
 	apple_sensors \
 	aquaero \
+	ascent \
 	barometer \
 	battery \
-	buddyinfo \
-	capabilities \
 	ceph \
-	cgroups \
 	cpusleep \
 	curl_jolokia \
 	curl_json \
@@ -59,15 +59,12 @@ COLLECTD_PLUGINS_DISABLED:= \
 	gps \
 	gpu_nvidia \
 	grpc \
-	hddtemp \
-	hugepages \
 	infiniband \
-	intel_pmu \
-	intel_rdt \
 	ipc \
 	ipmi \
 	ipstats \
 	ipvs \
+	iwinfo \
 	java \
 	logparser \
 	log_logstash \
@@ -85,11 +82,12 @@ COLLECTD_PLUGINS_DISABLED:= \
 	multimeter \
 	netapp \
 	netstat_udp \
-	nfs \
 	notify_desktop \
 	notify_email \
 	notify_nagios \
 	numa \
+	nut \
+	olsrd \
 	onewire \
 	openldap \
 	openvz \
@@ -100,10 +98,11 @@ COLLECTD_PLUGINS_DISABLED:= \
 	perl \
 	pf \
 	pinba \
-	procevent \
+	powerdns \
 	python \
 	redfish \
 	redis \
+	routeros \
 	rrdcached \
 	serial \
 	sigrok \
@@ -112,12 +111,14 @@ COLLECTD_PLUGINS_DISABLED:= \
 	synproxy \
 	sysevent \
 	tape \
+	teamspeak2 \
 	tokyotyrant \
 	turbostat \
 	uuid \
 	varnish \
 	virt \
 	vserver \
+	wireless \
 	write_influxdb_udp \
 	write_kafka \
 	write_log \
@@ -135,10 +136,10 @@ COLLECTD_PLUGINS_DISABLED:= \
 	zookeeper
 
 COLLECTD_PLUGINS_SELECTED:= \
-	apache \
-	apcups \
-	ascent \
 	bind \
+	buddyinfo \
+	capabilities \
+	cgroups \
 	chrony \
 	conntrack \
 	contextswitch \
@@ -156,11 +157,14 @@ COLLECTD_PLUGINS_SELECTED:= \
 	exec \
 	filecount \
 	fscache \
+	hddtemp \
+	hugepages \
+	intel_pmu \
+	intel_rdt \
 	interface \
 	ipstatistics \
 	iptables \
 	irq \
-	iwinfo \
 	load \
 	logfile \
 	lua \
@@ -175,17 +179,15 @@ COLLECTD_PLUGINS_SELECTED:= \
 	mysql \
 	netlink \
 	network \
+	nfs \
 	nginx \
 	ntpd \
-	nut \
-	olsrd \
 	openvpn \
 	ping \
 	postgresql \
-	powerdns \
 	processes \
+	procevent \
 	protocols \
-	routeros \
 	rrdtool \
 	sensors \
 	smart \
@@ -198,7 +200,6 @@ COLLECTD_PLUGINS_SELECTED:= \
 	tail \
 	tail_csv \
 	tcpconns \
-	teamspeak2 \
 	ted \
 	thermal \
 	threshold \
@@ -207,7 +208,6 @@ COLLECTD_PLUGINS_SELECTED:= \
 	uptime \
 	users \
 	vmem \
-	wireless \
 	write_graphite \
 	write_http \
 	write_prometheus
