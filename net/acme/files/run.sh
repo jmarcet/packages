@@ -276,7 +276,7 @@ issue_cert() {
 	acme_args="$acme_args --keylength $keylength"
 	[ -n "$ACCOUNT_EMAIL" ] && acme_args="$acme_args --accountemail $ACCOUNT_EMAIL"
 
-	if [ -n "$acme_server" ]; then
+	if [ -n $acme_server ]; then
 		log "Using custom ACME server URL"
 		acme_args="$acme_args --server $acme_server"
 	else
