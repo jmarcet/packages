@@ -23,7 +23,7 @@ define Package/docker-compose
   SUBMENU:=Python
   TITLE:=Docker Compose
   URL:=https://github.com/docker/compose
-  DEPENDS+=+docker-ce \
+  DEPENDS+=+docker \
       +python3-light \
       +python3-cached-property \
       +python3-distro \
