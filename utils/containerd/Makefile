@@ -1,15 +1,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=containerd
-PKG_VERSION:=1.3.7
+PKG_VERSION:=1.4.1
 PKG_RELEASE:=1
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/containerd/containerd/tar.gz/v${PKG_VERSION}?
-PKG_HASH:=d30d59e143697aa4f0960205b3f5ac59c573b332f20507740ef2dc0fb5ae8ded
-PKG_SOURCE_VERSION:=8fba4e9a7d01810a393d5d25a3621dc101981175
+PKG_HASH:=d410b8efc94e4124990f01de7107223971be8c9258fc651decf9e0ba648485b5
+PKG_SOURCE_VERSION:=c623d1b36f09f8ef6536a057bd658b3aa8632828
 
 PKG_MAINTAINER:=Gerard Ryan <G.M0N3Y.2503@gmail.com>
 
@@ -21,17 +21,6 @@ GO_PKG:=github.com/containerd/containerd
 
 include $(INCLUDE_DIR)/package.mk
 include ../../lang/golang/golang-package.mk
-
-define Package/containerd/config
-config CONTAINERD_SECCOMP
-	depends on PACKAGE_containerd
-	bool "Enable support for seccomp in containerd"
-	default DOCKER_SECCOMP
-	select KERNEL_SECCOMP
-	help
-	  Build containerd with support for seccomp filters.
-	  Also pulls-in the needed kernel features.
-endef
 
 define Package/containerd
   SECTION:=utils
@@ -53,8 +42,8 @@ MAKE_FLAGS += \
 	VERSION=$(PKG_VERSION) \
 	REVISION=$(PKG_SOURCE_VERSION)
 
-ifeq ($(CONFIG_CONTAINERD_SECCOMP),y)
-MAKE_FLAGS += BUILDTAGS='seccomp'
+ifeq ($(SELINUX),y)
+MAKE_FLAGS += BUILDTAGS='selinux'
 else
 MAKE_FLAGS += BUILDTAGS=''
 endif
@@ -64,7 +53,7 @@ Build/Compile=$(call Build/Compile/Default)
 
 define Package/containerd/install
 	$(INSTALL_DIR) $(1)/usr/bin/
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/{ctr,containerd,containerd-stress,containerd-shim} $(1)/usr/bin/
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/{ctr,containerd,containerd-stress,containerd-shim,containerd-shim-runc-v1,containerd-shim-runc-v2} $(1)/usr/bin/
 endef
 
 $(eval $(call BuildPackage,containerd))
