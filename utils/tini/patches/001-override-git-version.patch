@@ -1,0 +1,26 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 332b361..aba82d0 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -27,8 +27,9 @@ execute_process(
+   OUTPUT_VARIABLE git_dirty_check_out
+ )
+
+-if("${git_version_check_ret}" EQUAL 0)
+-  set(tini_VERSION_GIT " - git.${tini_VERSION_GIT}")
++if(NOT "${TINI_COMMIT}" STREQUAL "")
++  set(tini_VERSION_GIT "${TINI_COMMIT}")
++elseif("${git_version_check_ret}" EQUAL 0)
+   if(NOT "${git_dirty_check_out}" STREQUAL "")
+     set(tini_VERSION_GIT "${tini_VERSION_GIT}-dirty")
+   endif()
+@@ -36,6 +37,10 @@ else()
+   set(tini_VERSION_GIT "")
+ endif()
+
++if(NOT ${tini_VERSION_GIT} STREQUAL "")
++  set(tini_VERSION_GIT " - git.${tini_VERSION_GIT}")
++endif()
++
+ # Flags
+ include(CheckCSourceCompiles)
