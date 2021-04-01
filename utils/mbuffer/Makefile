@@ -1,12 +1,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mbuffer
-PKG_VERSION:=20210209
+PKG_VERSION:=20210328
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tgz
 PKG_SOURCE_URL:=https://www.maier-komor.de/software/mbuffer
-PKG_HASH:=e81f2788e2621f20f848181ef2cb19ac6d12328691437f301574b253fd899a0c
+PKG_HASH:=51b5b8d8488991a55fe1dfce90130f9e47bc1ce286ba03b4f628c04b784fdc5d
 
 PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILES:=LICENSE
@@ -29,6 +29,11 @@ endef
 define Package/mbuffer/description
 A tool for buffering data streams with a large set of unique features
 endef
+
+#define Build/Configure
+#	cd $(PKG_BUILD_DIR)
+#	$(PWD)/mkversion.sh
+#endef
 
 define Package/mbuffer/install
 	$(INSTALL_DIR) $(1)/usr/bin
