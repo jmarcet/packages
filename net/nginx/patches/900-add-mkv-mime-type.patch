@@ -1,0 +1,10 @@
+--- ./conf/mime.types-orig	2020-12-15 14:41:39.000000000 +0000
++++ ./conf/mime.types	2021-05-02 08:31:49.663001895 +0000
+@@ -87,6 +87,7 @@ types {
+     video/mp4                                        mp4;
+     video/mpeg                                       mpeg mpg;
+     video/quicktime                                  mov;
++    video/webm                                       mkv;
+     video/webm                                       webm;
+     video/x-flv                                      flv;
+     video/x-m4v                                      m4v;
