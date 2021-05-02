@@ -281,8 +281,6 @@ iptables_add_blocking_rule() {
 
 stop_service() {
 	if /etc/init.d/dockerd running; then
-		docker update --restart=no $(docker ps -a -q)
-		sync; sleep 1; sync
 		service_stop "/usr/bin/dockerd"
 	fi
 }
