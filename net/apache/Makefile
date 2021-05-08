@@ -155,7 +155,7 @@ endef
 define Package/apache-utils
 $(call Package/apache/Default)
   TITLE:=Apache utilities
-  DEPENDS:=apache
+  DEPENDS:=+libapr +libaprutil +libuuid
 endef
 
 define Package/apache-utils/description
