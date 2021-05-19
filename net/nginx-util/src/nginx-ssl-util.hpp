@@ -175,8 +175,8 @@ constexpr auto _escape = _Line{
         std::string ret{};
         for (char c : strptr) {
                 switch(c) {
-                    case '^': ret += '\\'; [[fallthrough]];
-                    case '_': [[fallthrough]];
+                    case '^': ret += '\\'; /* fallthrough */
+                    case '_': /* fallthrough */
                     case '-': ret += c;
                     break;
                     default:
