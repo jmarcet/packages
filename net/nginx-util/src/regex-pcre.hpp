@@ -289,7 +289,7 @@ auto smatch::format(const std::string& fmt) const
                 }  // else:
 
                 ret += '$';
-                [[fallthrough]];
+                /* fallthrough */
 
             case '$':  // escaped
                 ret += chr;
