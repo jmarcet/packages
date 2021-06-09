@@ -1,12 +1,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=apk
-PKG_VERSION:=2.12.4
+PKG_VERSION:=2.12.5
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE:=apk-tools-v$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.alpinelinux.org/alpine/apk-tools/-/archive/v$(PKG_VERSION)
-PKG_HASH:=41110665f7d14ef9678c389687aab0fa6c0a6be19e1a3dabbab6b20b17f3bacc
+PKG_HASH:=e378c12a634455353cebafaefbfddb0b012bcc44e7028e36b8d1f3cf63acd847
 PKG_BUILD_DIR:=$(BUILD_DIR)/apk-tools-v$(PKG_VERSION)
 
 PKG_MAINTAINER:=Paul Spooren <mail@aparcar.org>
@@ -45,17 +45,10 @@ MAKE_FLAGS += LUA=no
 define Package/apk/install
 	$(INSTALL_DIR) $(1)/lib/apk/db
 
-	$(INSTALL_DIR) $(1)/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/sbin/apk $(1)/bin/apk
+	$(INSTALL_DIR) $(1)/sbin
+	$(INSTALL_BIN) ./files/apk $(1)/sbin/apk
 
-	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/lib/* $(1)/usr/lib/
-
-	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
-	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/apk.pc \
-		$(1)/usr/lib/pkgconfig/
-
-	$(INSTALL_DIR) $(1)/etc/apk/
+	$(INSTALL_DIR) $(1)/etc/apk/protected_paths.d
 	echo $(ARCH) > $(1)/etc/apk/arch
 	touch $(1)/etc/apk/world
 endef
