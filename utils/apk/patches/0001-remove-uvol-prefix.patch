@@ -1,0 +1,29 @@
+From 7b6ebda5be3982dfe0159f2cc47fb020f901173c Mon Sep 17 00:00:00 2001
+From: Daniel Golle <daniel@makrotopia.org>
+Date: Fri, 16 Jul 2021 19:40:45 +0100
+Subject: [PATCH 1/2] remove 'uvol/' prefix
+
+---
+ src/app_extract.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/src/app_extract.c
++++ b/src/app_extract.c
+@@ -83,7 +83,7 @@ static int uvol_run(struct apk_ctx *ac,
+ 	struct apk_out *out = &ac->out;
+ 	pid_t pid;
+ 	int r, status;
+-	char *argv[] = { (char*)apk_ctx_get_uvol(ac), action, (char*) volname, arg1, arg2, 0 };
++	char *argv[] = { (char*)apk_ctx_get_uvol(ac), action, (char*) &volname[5], arg1, arg2, 0 };
+ 	posix_spawn_file_actions_t act;
+ 
+ 	posix_spawn_file_actions_init(&act);
+@@ -108,7 +108,7 @@ static int uvol_extract(struct apk_ctx *
+ 	struct apk_ostream *os;
+ 	pid_t pid;
+ 	int r, status, pipefds[2];
+-	char *argv[] = { (char*)apk_ctx_get_uvol(ac), "write", (char*) volname, arg1, 0 };
++	char *argv[] = { (char*)apk_ctx_get_uvol(ac), "write", (char*) &volname[5], arg1, 0 };
+ 	posix_spawn_file_actions_t act;
+ 
+ 	if (pipe2(pipefds, O_CLOEXEC) != 0) return -errno;
