@@ -1,0 +1,20 @@
+From 11f33ec39fc543cb0ecaeeb249c904b6ba2b5b46 Mon Sep 17 00:00:00 2001
+From: Daniel Golle <daniel@makrotopia.org>
+Date: Fri, 16 Jul 2021 19:55:37 +0100
+Subject: [PATCH 2/2] extract: fix uvol parameter order
+
+---
+ src/app_extract.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/src/app_extract.c
++++ b/src/app_extract.c
+@@ -146,7 +146,7 @@ static int apk_extract_volume(struct apk
+ 	int r;
+ 
+ 	snprintf(size, sizeof size, "%ju", fi->size);
+-	r = uvol_run(ac, "create", fi->name, "ro", size);
++	r = uvol_run(ac, "create", fi->name, size, "ro");
+ 	if (r != 0) return r;
+ 	return  uvol_extract(ac, fi->name, size, fi->size, is, dctx);
+ }
