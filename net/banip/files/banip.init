@@ -6,7 +6,7 @@
 # (s)hellcheck exceptions
 # shellcheck disable=1091,2030,2031,2034,2039,2086,2129,2140,2143,2154,2181,2183,2188
 
-START=45
+START=46
 USE_PROCD=1
 
 if [ -n "$(type -t extra_command)" ]

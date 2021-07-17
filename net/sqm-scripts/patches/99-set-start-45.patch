@@ -1,0 +1,10 @@
+--- ./platform/openwrt/sqm-init-orig	2020-12-31 13:51:03.000000000 +0100
++++ ./platform/openwrt/sqm-init	2021-07-17 15:49:03.379475949 +0200
+@@ -1,6 +1,6 @@
+ #!/bin/sh /etc/rc.common
+ 
+-START=50
++START=45
+ USE_PROCD=1
+ 
+ service_triggers()
