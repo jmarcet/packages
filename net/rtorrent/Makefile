@@ -70,7 +70,7 @@ CONFIGURE_ARGS += \
 	--disable-debug \
 	--with-libcurl="$(STAGING_DIR)/usr" \
 	--with-ncurses \
-	$(if $(CONFIG_IPV6),--enable,--disable)-ipv6
+	--disable-ipv6
 
 ifeq ($(BUILD_VARIANT),rpc)
 CONFIGURE_ARGS += --with-xmlrpc-c
