@@ -3,7 +3,7 @@
 
 START=81
 
-PROG=/usr/sbin/minidlnad
+PROG=minidlnad
 USE_PROCD=1
 
 MINIDLNA_CONFIG_FILE="/var/etc/minidlna.conf"
