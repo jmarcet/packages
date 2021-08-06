@@ -1,7 +1,7 @@
 #!/bin/sh /etc/rc.common
 # Copyright (C) 2010 OpenWrt.org
 
-START=81
+START=99
 
 PROG=minidlnad
 USE_PROCD=1
