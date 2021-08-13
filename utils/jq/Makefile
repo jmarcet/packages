@@ -8,15 +8,17 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=jq
-PKG_VERSION:=1.6
 PKG_RELEASE:=1
 PKG_LICENSE:=BSD
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/stedolan/jq/releases/download/jq-$(PKG_VERSION)/
-PKG_HASH:=9625784cf2e4fd9842f1d407681ce4878b5b0dcddbcd31c6135114a30c71e6a8
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://github.com/stedolan/jq.git
+PKG_SOURCE_DATE:=2021-05-01
+PKG_SOURCE_VERSION:=d18b2d078c2383d9472d0a0a226e07009025574f
+PKG_MIRROR_HASH:=b8f4360a5b005d78df4d9eb23e0e467fe0438afc1d73a8e4e78b4b2d2bb2e243
 
 PKG_INSTALL:=1
+PKG_FIXUP:=autoreconf
 
 include $(INCLUDE_DIR)/package.mk
 
