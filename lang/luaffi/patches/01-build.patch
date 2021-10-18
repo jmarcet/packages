@@ -1,0 +1,15 @@
+--- ./Makefile-orig	2013-11-08 23:01:32.000000000 +0100
++++ ./Makefile	2021-10-18 22:45:50.342744216 +0200
+@@ -3,10 +3,10 @@
+ PKG_CONFIG=pkg-config
+ LUA=lua
+ 
+-LUA_CFLAGS=`$(PKG_CONFIG) --cflags lua5.2 2>/dev/null || $(PKG_CONFIG) --cflags lua`
++LUA_CFLAGS=`$(PKG_CONFIG) --cflags lua5.1 2>/dev/null || $(PKG_CONFIG) --cflags lua`
+ SOCFLAGS=-fPIC
+ SOCC=$(CC) -shared $(SOCFLAGS)
+-CFLAGS=-fPIC -g -Wall -Werror $(LUA_CFLAGS) -fvisibility=hidden -Wno-unused-function --std=gnu99
++CFLAGS=-fPIC -g -Wall -Werror $(LUA_CFLAGS) -fvisibility=hidden -Wno-unused-function --std=gnu99 -Wno-error=misleading-indentation
+ 
+ MODNAME=ffi
+ MODSO=$(MODNAME).so
