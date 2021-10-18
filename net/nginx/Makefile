@@ -354,7 +354,7 @@ endef
 Package/nginx-mod-luci-ssl/description = $(define Package/nginx-mod-luci/description) \
   This also include redirect from http to https and cert autogeneration.
 
-TARGET_CFLAGS += -fvisibility=hidden -ffunction-sections -fdata-sections -DNGX_LUA_NO_BY_LUA_BLOCK
+TARGET_CFLAGS += -fvisibility=hidden -ffunction-sections -fdata-sections
 TARGET_LDFLAGS += -Wl,--gc-sections
 
 ifeq ($(CONFIG_NGINX_LUA),y)
