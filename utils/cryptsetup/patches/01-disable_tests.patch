@@ -1,0 +1,20 @@
+--- ./Makefile.in-orig	2021-09-15 11:31:26.000000000 +0200
++++ ./Makefile.in	2021-10-22 01:57:14.287276072 +0200
+@@ -941,7 +941,7 @@ EXTRA_DIST = README.md COPYING.LGPL FAQ
+ 	man/cryptsetup-reencrypt.8 $(am__append_4) $(am__append_10) \
+ 	lib/libcryptsetup.pc.in lib/libcryptsetup.sym \
+ 	tokens/libcryptsetup-token.sym
+-SUBDIRS = po tests
++SUBDIRS =
+ CLEANFILES = 
+ DISTCLEAN_TARGETS = scripts/cryptsetup.conf
+ AM_CPPFLAGS = \
+--- ./Makefile.am-orig	2021-10-22 01:57:48.070971778 +0200
++++ ./Makefile.am	2021-10-22 01:57:56.679227016 +0200
+@@ -1,5 +1,5 @@
+ EXTRA_DIST = README.md COPYING.LGPL FAQ docs misc autogen.sh
+-SUBDIRS = po tests
++SUBDIRS =
+ CLEANFILES =
+ DISTCLEAN_TARGETS =
+ 
