@@ -72,7 +72,6 @@ MESON_ARGS += \
 	-Dstatic_runtime=false \
 	-Dbin_programs=true \
 	-Dbin_tests=false \
-	-Dbin_control=false \
 	-Dzlib=disabled \
 	-Dlzma=disabled \
 	-Dlz4=disabled \
