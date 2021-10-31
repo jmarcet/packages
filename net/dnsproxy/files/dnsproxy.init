@@ -77,6 +77,14 @@ load_config_list() {
 }
 
 load_config_param() {
+	append_param_arg "global" "dnscrypt_port" "--dnscrypt-port"
+	append_param_arg "global" "https_port" "--https-port"
+	append_param_arg "global" "quic_port" "--quic-port"
+	append_param_arg "global" "tls_port" "--tls-port"
+	append_param_arg "global" "tls_crt" "--tls-crt"
+	append_param_arg "global" "tls_key" "--tls-key"
+	append_param_arg "global" "tls_min_version" "--tls-min-version"
+	append_param_arg "global" "tls_max_version" "--tls-max-version"
 	append_param_arg "global" "log_file" "--output"
 	append_param_arg "global" "timeout" "--timeout"
 	append_param_arg "global" "max_go_routines" "--max-go-routines"
@@ -130,7 +138,7 @@ start_service() {
 	procd_set_param respawn
 	procd_set_param stdout 1
 	procd_set_param stderr 1
-	procd_set_param user dnsproxy
+	# procd_set_param user dnsproxy
 
 	procd_add_jail dnsproxy ronly log
 	procd_set_param capabilities "/etc/capabilities/dnsproxy.json"
