@@ -1,0 +1,19 @@
+--- ./nginx/crowdsec_nginx.conf-orig	2021-11-02 10:36:43.000000000 +0100
++++ ./nginx/crowdsec_nginx.conf	2021-12-21 16:31:35.984370328 +0100
+@@ -1,7 +1,7 @@
+-lua_package_path '/usr/local/lua/crowdsec/?.lua;;';
+-init_by_lua_block { 
++lua_package_path '/usr/lib/lua/crowdsec/?.lua;;';
++init_by_lua_block {
+ 	cs = require "CrowdSec"
+-	local ok, err = cs.init("/etc/crowdsec/bouncers/crowdsec-nginx-bouncer.conf", "crowdsec-nginx-bouncer/v0.0.7")
++	local ok, err = cs.init("/etc/crowdsec/bouncers/crowdsec-nginx-bouncer.conf", "crowdsec-nginx-bouncer/v0.0.8")
+ 	if ok == nil then
+ 		ngx.log(ngx.ERR, "[Crowdsec] " .. err)
+ 		error()
+@@ -9,4 +9,4 @@ init_by_lua_block {
+ 	ngx.log(ngx.ERR, "[Crowdsec] Initialisation done")
+ 	}
+ 
+-access_by_lua_file /usr/local/lua/crowdsec/access.lua;
++access_by_lua_file /usr/lib/lua/crowdsec/access.lua;
