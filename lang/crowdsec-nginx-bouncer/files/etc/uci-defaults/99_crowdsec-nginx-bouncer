@@ -1,0 +1,12 @@
+#!/bin/sh
+CONFIG=/etc/crowdsec/bouncers/crowdsec-nginx-bouncer.yaml
+## Gen&ConfigApiKey
+if grep -q '${API_KEY}' "$CONFIG"; then
+	SUFFIX=`tr -dc A-Za-z0-9 </dev/urandom | head -c 8`
+	API_KEY=`/usr/bin/cscli bouncers add cs-nginx-bouncer-${SUFFIX} -o raw`
+	sed -e "s:^\(API_KEY=\).\+$:\1$API_KEY:" -i $CONFIG
+else
+	echo API key already registered...
+fi
+
+exit 0
