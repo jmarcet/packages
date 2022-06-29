@@ -47,7 +47,7 @@ endef
 
 define Package/crowdsec-firewall-bouncer
 $(call Package/crowdsec-firewall-bouncer/Default)
-  DEPENDS:=@(PACKAGE_iptables-legacy||PACKAGE_nftables) \
+  DEPENDS:=@(PACKAGE_iptables-zz-legacy||PACKAGE_nftables) \
 	$(GO_ARCH_DEPENDS)
 endef
 
