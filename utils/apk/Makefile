@@ -1,28 +1,36 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=apk
-PKG_VERSION:=2.12.4
+PKG_VERSION:=2.12.10
 PKG_RELEASE:=$(AUTORELEASE)
 
-PKG_SOURCE:=apk-tools-v$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://gitlab.alpinelinux.org/alpine/apk-tools/-/archive/v$(PKG_VERSION)
-PKG_HASH:=41110665f7d14ef9678c389687aab0fa6c0a6be19e1a3dabbab6b20b17f3bacc
-PKG_BUILD_DIR:=$(BUILD_DIR)/apk-tools-v$(PKG_VERSION)
+PKG_SOURCE:=apk.static
+PKG_SOURCE_URL:=https://gitlab.alpinelinux.org/api/v4/projects/5/packages/generic//v${PKG_VERSION}/${ARCH}
+PKG_HASH:=d7506bb11327b337960910daffed75aa289d8bb350feab624c52965be82ceae8
+# https://gitlab.alpinelinux.org/alpine/apk-tools/-/releases
 
 PKG_MAINTAINER:=Paul Spooren <mail@aparcar.org>
 PKG_LICENSE:=GPL-2.0-only
 PKG_LICENSE_FILES:=LICENSE
 
 PKG_INSTALL:=1
-PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
+
+define Build/Prepare
+endef
+
+define Build/Compile
+endef
+
+define Build/Install
+endef
 
 define Package/apk
   SECTION:=utils
   CATEGORY:=Utilities
   TITLE:=apk package manager
-  DEPENDS:=+zlib +libopenssl @!arc
+  DEPENDS:=@!arc
   URL:=$(PKG_SOURCE_URL)
 endef
 
@@ -40,20 +48,11 @@ define Package/alpine-repositories
   DEPENDS:=apk
 endef
 
-MAKE_FLAGS += LUA=no
-
 define Package/apk/install
 	$(INSTALL_DIR) $(1)/lib/apk/db
 
-	$(INSTALL_DIR) $(1)/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/sbin/apk $(1)/bin/apk
-
-	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/lib/* $(1)/usr/lib/
-
-	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
-	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/apk.pc \
-		$(1)/usr/lib/pkgconfig/
+	$(INSTALL_DIR) $(1)/sbin
+	$(INSTALL_BIN) $(DL_DIR)/apk.static $(1)/sbin/apk
 
 	$(INSTALL_DIR) $(1)/etc/apk/
 	echo $(ARCH) > $(1)/etc/apk/arch
