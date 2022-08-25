@@ -50,6 +50,7 @@ endef
 
 define Package/vim-fuller
   $(call Package/vim/Default)
+  DEPENDS:=+libncursesw +libsodium
   TITLE+= (Big)
   PROVIDES:=vim vim-full
   CONFLICTS:=vim vim-full
