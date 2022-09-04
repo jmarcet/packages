@@ -107,3 +107,8 @@ service_triggers() {
 	config_foreach add_interface_trigger dhcp
 }
 
+shutdown() {
+	stop
+	sleep 1
+}
+
