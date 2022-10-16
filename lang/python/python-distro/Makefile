@@ -1,11 +1,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python-distro
-PKG_VERSION:=1.7.0
+PKG_VERSION:=1.8.0
 PKG_RELEASE:=1
 
 PYPI_NAME:=distro
-PKG_HASH:=151aeccf60c216402932b52e40ee477a939f8d58898927378a02abbe852c1c39
+PKG_HASH:=02e111d1dc6a50abb8eed6bf31c3e48ed8b0830d1ea2a1b78c61765c2513fdd8
 
 PKG_MAINTAINER:=Javier Marcet <javier@marcet.info>
 PKG_LICENSE:=Apache-2.0
