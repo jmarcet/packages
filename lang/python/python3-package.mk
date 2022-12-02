@@ -60,7 +60,7 @@ define Python3/Run
 endef
 
 define Python3/FixShebang
-	$(SED) "1"'!'"b;s,^#"'!'".*python.*,#"'!'"/usr/bin/python3," -i --follow-symlinks $(1)
+	$(SED) "1"'!'"b;s,^#"'!'".*python.*,#"'!'"/usr/bin/python3," $(1)
 endef
 
 # default max recursion is 10
