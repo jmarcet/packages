@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=lualogging
-PKG_VERSION:=1.5.2
+PKG_VERSION:=1.8.0
 PKG_RELEASE:=1
 PKG_MAINTAINER:=Javier Marcet <javier@marcet.info>
 PKG_LICENSE:=MIT
@@ -9,7 +9,7 @@ PKG_LICENSE_FILES:=COPYRIGHT
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/lunarmodules/lualogging/archive/refs/tags/v${PKG_VERSION}.tar.gz?
-PKG_HASH:=12be5da005f72dbd82dd720e645f450fc5afd14dca35b221dd2c307aef7f0f29
+PKG_HASH:=44a085633e545b5ea446e8ac7ff352f983e6b9eb30033f0fd69c89b535bd19fc
 
 PKG_BUILD_DEPENDS:=lua/host luarocks/host
 
