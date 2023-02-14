@@ -47,7 +47,8 @@ endef
 
 define Package/crowdsec-firewall-bouncer
 $(call Package/crowdsec-firewall-bouncer/Default)
-  DEPENDS:=$(GO_ARCH_DEPENDS)
+  DEPENDS:=@(PACKAGE_iptables-zz-legacy||PACKAGE_nftables) \
+	$(GO_ARCH_DEPENDS)
 endef
 
 define Package/golang-crowdsec-firewall-bouncer-dev
@@ -64,7 +65,7 @@ define Package/crowdsec-firewall-bouncer/Default/description
   crowdsec-firewall-bouncer will fetch new and old decisions
   from a CrowdSec API to add them in a blocklist used by supported firewalls.
 
-  You must install nftables.
+  You must install iptables+ipset or nftables.
 endef
 
 define Package/crowdsec-firewall-bouncer/description
@@ -82,15 +83,29 @@ endef
 define Package/crowdsec-firewall-bouncer/install
 	$(call GoPackage/Package/Install/Bin,$(1))
 
-	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_CONF) ./files/crowdsec.config $(1)/etc/config/crowdsec
+	$(INSTALL_DIR) $(1)/etc/crowdsec/bouncers
+	$(INSTALL_DATA) \
+		$(GO_PKG_BUILD_DIR)/src/$(GO_PKG)/config/crowdsec-firewall-bouncer.yaml \
+		$(1)/etc/crowdsec/bouncers
 
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./files/crowdsec-firewall-bouncer.initd $(1)/etc/init.d/crowdsec-firewall-bouncer
+	$(INSTALL_BIN) \
+		./files/crowdsec-firewall-bouncer.initd \
+		$(1)/etc/init.d/crowdsec-firewall-bouncer
+
+	$(INSTALL_DIR) $(1)/etc
+	$(INSTALL_BIN) \
+		./files/crowdsec-firewall-bouncer.firewall \
+		$(1)/etc/firewall.cs
+
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	$(INSTALL_BIN) \
+		./files/crowdsec-firewall-bouncer.defaults \
+		$(1)/etc/uci-defaults/99_crowdsec-firewall-bouncer
 endef
 
 define Package/crowdsec-firewall-bouncer/conffiles
-/etc/config/crowdsec
+/etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
 endef
 
 $(eval $(call GoBinPackage,crowdsec-firewall-bouncer))
