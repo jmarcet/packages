@@ -112,8 +112,7 @@ Available commands:
 	disable         Disable service autostart
 	enabled         Check if service is started on boot
 	report          [text|json|mail] Print banIP related set statistics
-	search          [<IPv4 address>|<IPv6 address>] Check if an element exists in a banIP set
-	survey          [<set name>] List all elements of a given banIP set
+	search          [<IPv4 address>|<IPv6 address>] Check if an element exists in the banIP sets
 	running         Check if service is running
 	status          Service status
 	trace           Start with syscall trace
@@ -166,7 +165,6 @@ Available commands:
 | ban_mailsender          | option | no-reply@banIP                | sender address for banIP related notification E-Mails                                 |
 | ban_mailtopic           | option | banIP notification            | topic for banIP related notification E-Mails                                          |
 | ban_mailprofile         | option | ban_notify                    | mail profile used in 'msmtp' for banIP related notification E-Mails                   |
-| ban_reportelements      | option | 1                             | list set elements in the report, disable this to speed up the report significantly    |
 | ban_resolver            | option | -                             | external resolver used for DNS lookups                                                |
 
 ## Examples
@@ -222,7 +220,7 @@ Available commands:
 ~# /etc/init.d/banip status
 ::: banIP runtime information
   + status            : active (nft: ✔, monitor: ✔)
-  + version           : 0.8.2-1
+  + version           : 0.8.1-3
   + element_count     : 180596
   + active_feeds      : allowlistvMAC, allowlistv4, allowlistv6, adawayv4, adawayv6, adguardv4, cinsscorev4, adguardv6, countryv6, countryv4, 
                         deblv4, deblv6, dohv4, dohv6, firehol1v4, oisdsmallv6, oisdsmallv4, urlvirv4, webclientv4, blocklistvMAC, blocklistv4,
@@ -271,14 +269,6 @@ Available commands:
 1.15.71.140
 1.15.77.237
 [...]
-```
-**default regex for logfile parsing**
-```
-list ban_logterm 'Exit before auth from'
-list ban_logterm 'luci: failed login'
-list ban_logterm 'error: maximum authentication attempts exceeded'
-list ban_logterm 'sshd.*Connection closed by.*\[preauth\]'
-list ban_logterm 'SecurityEvent=\"InvalidAccountID\".*RemoteAddress='
 ```
 
 **allow-/blocklist handling**  
