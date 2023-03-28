@@ -94,15 +94,14 @@ survey() {
 }
 
 service_triggers() {
-	local iface trigger trigger_action delay
+	local iface trigger delay
 
 	trigger="$(uci_get banip global ban_trigger)"
-	trigger_action="$(uci_get banip global ban_triggeraction "start")"
 	delay="$(uci_get banip global ban_triggerdelay "10")"
 	PROCD_RELOAD_DELAY=$((delay * 1000))
 
 	for iface in ${trigger}; do
-		procd_add_interface_trigger "interface.*.up" "${iface}" "${ban_init}" "${trigger_action}"
+		procd_add_interface_trigger "interface.*.up" "${iface}" "${ban_init}" "start"
 	done
 	procd_add_reload_trigger "banip"
 }
