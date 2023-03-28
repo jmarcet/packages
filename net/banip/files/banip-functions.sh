@@ -34,7 +34,6 @@ ban_mailsender="no-reply@banIP"
 ban_mailreceiver=""
 ban_mailtopic="banIP notification"
 ban_mailprofile="ban_notify"
-ban_mailnotifcation="0"
 ban_reportelements="1"
 ban_nftloglevel="warn"
 ban_nftpriority="-200"
@@ -169,7 +168,6 @@ f_log() {
 	fi
 	if [ "${class}" = "err" ]; then
 		f_genstatus "error"
-		[ "${ban_mailnotification}" = "1" ] && [ -n "${ban_mailreceiver}" ] && [ -x "${ban_mailcmd}" ] && f_mail
 		f_rmdir "${ban_tmpdir}"
 		rm -rf "${ban_lock}"
 		exit 1
@@ -353,10 +351,10 @@ f_getif() {
 # get wan devices
 #
 f_getdev() {
-	local dev iface update="0" cnt="0" cnt_max="30"
+	local dev iface update="0" cnt="0" cnt_max="10"
 
 	if [ "${ban_autodetect}" = "1" ]; then
-		while [ "${cnt}" -lt "${cnt_max}" ] && [ -z "${ban_dev}" ]; do
+		while [ -z "${ban_dev}" ] && [ "${cnt}" -le "${cnt_max}" ]; do
 			network_flush_cache
 			for iface in ${ban_ifv4} ${ban_ifv6}; do
 				network_get_device dev "${iface}"
@@ -1034,7 +1032,6 @@ f_report() {
 	local detail set_details jsnval timestamp autoadd_allow autoadd_block sum_sets sum_setinput sum_setforwardwan sum_setforwardlan sum_setelements sum_cntinput sum_cntforwardwan sum_cntforwardlan
 
 	[ -z "${ban_dev}" ] && f_conf
-	f_system
 	f_mkdir "${ban_reportdir}"
 	report_jsn="${ban_reportdir}/ban_report.jsn"
 	report_txt="${ban_reportdir}/ban_report.txt"
@@ -1185,10 +1182,9 @@ f_report() {
 			[ -s "${report_jsn}" ] && cat "${report_jsn}"
 			;;
 		"mail")
-			[ -n "${ban_mailreceiver}" ] && [ -x "${ban_mailcmd}" ] && f_mail
+			[ -x "${ban_mailcmd}" ] && f_mail
 			;;
 	esac
-	rm -f "${report_txt}"
 }
 
 # set search
@@ -1216,7 +1212,7 @@ f_search() {
 	printf "%s\n%s\n%s\n" ":::" "::: banIP Search" ":::"
 	printf "%s\n" "    Looking for IP '${ip}' on $(date "+%Y-%m-%d %H:%M:%S")"
 	printf "%s\n" "    ---"
-	cnt="1"
+	cnt=1
 	for set in ${table_sets}; do
 		(
 			if "${ban_nftcmd}" get element inet banIP "${set}" "{ ${ip} }" >/dev/null 2>&1; then
@@ -1261,8 +1257,11 @@ f_mail() {
 
 	# load mail template
 	#
-	[ -r "${ban_mailtemplate}" ] && . "${ban_mailtemplate}" || f_log "info" "the mail template is missing"
-	[ -z "${mail_text}" ] && f_log "info" "the 'mail_text' template variable is empty"
+	[ ! -r "${ban_mailtemplate}" ] && f_log "err" "the mail template is missing"
+	. "${ban_mailtemplate}"
+
+	[ -z "${ban_mailreceiver}" ] && f_log "err" "the option 'ban_mailreceiver' is missing"
+	[ -z "${mail_text}" ] && f_log "err" "the 'mail_text' is empty"
 	[ "${ban_debug}" = "1" ] && msmtp_debug="--debug"
 
 	# send mail
@@ -1274,7 +1273,7 @@ f_mail() {
 		f_log "info" "failed to send status mail (${?})"
 	fi
 
-	f_log "debug" "f_mail    ::: notification: ${ban_mailnotification}, template: ${ban_mailtemplate}, profile: ${ban_mailprofile}, receiver: ${ban_mailreceiver}, rc: ${?}"
+	f_log "debug" "f_mail    ::: template: ${ban_mailtemplate}, profile: ${ban_mailprofile}, receiver: ${ban_mailreceiver}, rc: ${?}"
 }
 
 # check banIP availability and initial sourcing
