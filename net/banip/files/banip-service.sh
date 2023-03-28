@@ -29,12 +29,12 @@ f_mkfile "${ban_allowlist}"
 #
 if [ "${ban_action}" != "reload" ]; then
 	if [ -x "${ban_fw4cmd}" ]; then
-		cnt="0"
-		while [ "${cnt}" -lt "30" ] && ! /etc/init.d/firewall status >/dev/null 2>&1; do
+		cnt=0
+		while [ "${cnt}" -lt "10" ] && ! /etc/init.d/firewall status | grep -q "^active"; do
 			cnt="$((cnt + 1))"
 			sleep 1
 		done
-		if ! /etc/init.d/firewall status >/dev/null 2>&1; then
+		if ! /etc/init.d/firewall status | grep -q "^active"; then
 			f_log "err" "nft based firewall/fw4 not functional"
 		fi
 	else
@@ -125,7 +125,7 @@ for feed in allowlist ${ban_feed} blocklist; do
 done
 wait
 
-# start background domain lookup
+# start domain lookup
 #
 f_log "info" "start detached banIP domain lookup"
 (f_lookup "allowlist") &
@@ -133,16 +133,15 @@ hold="$((cnt % ban_cores))"
 [ "${hold}" = "0" ] && wait
 (f_lookup "blocklist") &
 
-# end processing
+# tidy up
 #
 f_rmset
 f_rmdir "${ban_tmpdir}"
 f_genstatus "active"
-[ "${ban_mailnotification}" = "1" ] && [ -n "${ban_mailreceiver}" ] && [ -x "${ban_mailcmd}" ] && f_mail
 f_log "info" "finished banIP download processes"
 rm -rf "${ban_lock}"
 
-# start detached log service
+# start log service
 #
 if [ -x "${ban_logreadcmd}" ] && [ -n "${ban_logterm%%??}" ]; then
 	f_log "info" "start detached banIP log service"
@@ -185,7 +184,7 @@ if [ -x "${ban_logreadcmd}" ] && [ -n "${ban_logterm%%??}" ]; then
 			fi
 		done
 
-# start detached no-op service loop
+# start no-op service loop
 #
 else
 	f_log "info" "start detached no-op banIP service (logterms are missing)"
