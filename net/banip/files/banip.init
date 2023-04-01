@@ -74,10 +74,8 @@ status() {
 }
 
 status_service() {
-	local actual="${1}"
-
 	[ -z "$(command -v "f_system")" ] && . "${ban_funlib}"
-	[ -n "${actual}" ] && f_actual || f_getstatus
+	f_getstatus
 }
 
 report() {
