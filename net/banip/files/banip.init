@@ -5,7 +5,7 @@
 # (s)hellcheck exceptions
 # shellcheck disable=1091,2034,3043,3057,3060
 
-START=30
+START=46
 USE_PROCD=1
 
 if type extra_command >/dev/null 2>&1; then
