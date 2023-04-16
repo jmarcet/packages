@@ -78,10 +78,7 @@ ban_debug="0"
 f_system() {
 	local cpu core
 
-	if [ -z "${ban_dev}" ]; then
-		ban_debug="$(uci_get banip global ban_debug)"
-		ban_cores="$(uci_get banip global ban_cores)"
-	fi
+	[ -z "${ban_dev}" ] && ban_cores="$(uci_get banip global ban_cores)"
 	ban_memory="$("${ban_awkcmd}" '/^MemAvailable/{printf "%s",int($2/1000)}' "/proc/meminfo" 2>/dev/null)"
 	ban_ver="$(${ban_ubuscmd} -S call rpc-sys packagelist '{ "all": true }' 2>/dev/null | jsonfilter -ql1 -e '@.packages.banip')"
 	ban_sysver="$(${ban_ubuscmd} -S call system board 2>/dev/null | jsonfilter -ql1 -e '@.model' -e '@.release.description' |
@@ -1285,21 +1282,17 @@ f_mail() {
 	f_log "debug" "f_mail    ::: notification: ${ban_mailnotification}, template: ${ban_mailtemplate}, profile: ${ban_mailprofile}, receiver: ${ban_mailreceiver}, rc: ${?}"
 }
 
-# initial sourcing
-#
-if [ -r "/lib/functions.sh" ] && [ -r "/lib/functions/network.sh" ] && [ -r "/usr/share/libubox/jshn.sh" ]; then
-	. "/lib/functions.sh"
-	. "/lib/functions/network.sh"
-	. "/usr/share/libubox/jshn.sh"
-else
-	rm -rf "${ban_lock}"
-	exit 1
-fi
-
-# check banIP availability
+# check banIP availability and initial sourcing
 #
 f_system
 if [ "${ban_action}" != "stop" ]; then
+	if [ -r "/lib/functions.sh" ] && [ -r "/lib/functions/network.sh" ] && [ -r "/usr/share/libubox/jshn.sh" ]; then
+		. "/lib/functions.sh"
+		. "/lib/functions/network.sh"
+		. "/usr/share/libubox/jshn.sh"
+	else
+		f_log "err" "system libraries not found"
+	fi
 	[ ! -d "/etc/banip" ] && f_log "err" "banIP config directory not found, please re-install the package"
 	[ ! -r "/etc/banip/banip.feeds" ] && f_log "err" "banIP feed file not found, please re-install the package"
 	[ ! -r "/etc/config/banip" ] && f_log "err" "banIP config not found, please re-install the package"
