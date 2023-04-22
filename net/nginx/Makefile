@@ -417,8 +417,8 @@ CONFIGURE_ARGS += \
 			--without-pcre2
 
 define Package/nginx-mod-luci/install
-	$(INSTALL_DIR) $(1)/etc/nginx/conf.d
-	$(INSTALL_CONF) ./files-luci-support/luci.locations $(1)/etc/nginx/conf.d/
+	$(INSTALL_DIR) $(1)/etc/nginx/snippets
+	$(INSTALL_CONF) ./files-luci-support/luci_locations.conf $(1)/etc/nginx/snippets/
 endef
 
 define Package/nginx-ssl/install
