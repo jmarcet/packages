@@ -1,0 +1,17 @@
+--- ./conf/mime.types-orig	2021-09-07 17:21:03.000000000 +0200
++++ ./conf/mime.types	2023-04-22 09:29:02.971547925 +0200
+@@ -84,11 +84,10 @@ types {
+     audio/x-realaudio                                ra;
+ 
+     video/3gpp                                       3gpp 3gp;
+-    video/mp2t                                       ts;
+-    video/mp4                                        mp4;
+-    video/mpeg                                       mpeg mpg;
++    #video/mp2t                                      ts;
++    video/mp4                                        mp4 mpeg mpg tmp ts;
+     video/quicktime                                  mov;
+-    video/webm                                       webm;
++    video/webm                                       mkv webm;
+     video/x-flv                                      flv;
+     video/x-m4v                                      m4v;
+     video/x-mng                                      mng;
