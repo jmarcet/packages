@@ -67,6 +67,7 @@ PKG_CONFIG_DEPENDS := \
 	CONFIG_NGINX_HTTP_REAL_IP \
 	CONFIG_NGINX_HTTP_SECURE_LINK \
 	CONFIG_NGINX_HTTP_BROTLI \
+	CONFIG_NGINX_HTTP_GEOIP2 \
 	CONFIG_NGINX_HEADERS_MORE \
 	CONFIG_NGINX_STREAM_CORE_MODULE \
 	CONFIG_NGINX_STREAM_SSL_MODULE \
@@ -102,7 +103,8 @@ define Package/nginx-ssl
   DEPENDS+= +NGINX_PCRE:libpcre \
 	+NGINX_PCRE:nginx-ssl-util +!NGINX_PCRE:nginx-ssl-util-nopcre \
 	+NGINX_HTTP_GZIP:zlib +NGINX_LUA:liblua +NGINX_DAV:libxml2 \
-	+NGINX_UBUS:libubus +NGINX_UBUS:libblobmsg-json +NGINX_UBUS:libjson-c
+	+NGINX_UBUS:libubus +NGINX_UBUS:libblobmsg-json +NGINX_UBUS:libjson-c \
+	+NGINX_HTTP_GEOIP2:libmaxminddb
   EXTRA_DEPENDS:=nginx-ssl-util$(if $(CONFIG_NGINX_PCRE),,-nopcre) (>=1.5-1) (<2)
   CONFLICTS:=nginx-all-module
 endef
@@ -115,7 +117,7 @@ define Package/nginx-all-module
   $(Package/nginx/default)
   TITLE += with ALL module selected
   DEPENDS+=+libpcre +nginx-ssl-util +zlib +liblua +libxml2 +libubus \
-	+libblobmsg-json +libjson-c
+	+libblobmsg-json +libjson-c +libmaxminddb
   EXTRA_DEPENDS:=nginx-ssl-util (>=1.5-1) (<2)
   VARIANT:=all-module
   PROVIDES += nginx-ssl
@@ -287,6 +289,9 @@ ifneq ($(BUILD_VARIANT),all-module)
   ifeq ($(CONFIG_NGINX_HTTP_BROTLI),y)
     ADDITIONAL_MODULES += --add-module=$(PKG_BUILD_DIR)/nginx-brotli
   endif
+  ifeq ($(CONFIG_NGINX_HTTP_GEOIP2),y)
+    ADDITIONAL_MODULES += --add-module=$(PKG_BUILD_DIR)/nginx-geoip2
+  endif
   ifeq ($(CONFIG_NGINX_RTMP_MODULE),y)
     ADDITIONAL_MODULES += --add-module=$(PKG_BUILD_DIR)/nginx-rtmp
   endif
@@ -296,6 +301,7 @@ ifneq ($(BUILD_VARIANT),all-module)
 else
   CONFIG_NGINX_HEADERS_MORE:=y
   CONFIG_NGINX_HTTP_BROTLI:=y
+  CONFIG_NGINX_HTTP_GEOIP2:=y
   CONFIG_NGINX_RTMP_MODULE:=y
   CONFIG_NGINX_TS_MODULE:=y
   CONFIG_NGINX_NAXSI:=y
@@ -313,7 +319,8 @@ else
 	--add-module=$(PKG_BUILD_DIR)/lua-nginx \
 	--add-module=$(PKG_BUILD_DIR)/nginx-dav-ext-module \
 	--add-module=$(PKG_BUILD_DIR)/nginx-brotli --add-module=$(PKG_BUILD_DIR)/nginx-rtmp \
-	--add-module=$(PKG_BUILD_DIR)/nginx-ts --add-module=$(PKG_BUILD_DIR)/nginx-ubus-module
+	--add-module=$(PKG_BUILD_DIR)/nginx-ts --add-module=$(PKG_BUILD_DIR)/nginx-ubus-module \
++	--add-module=$(PKG_BUILD_DIR)/nginx-geoip2
   config_files += koi-utf koi-win win-utf fastcgi_params uwsgi_params
 endif
 
@@ -423,6 +430,21 @@ endef
 
 define Prepare/nginx-brotli
 	$(eval $(Download/nginx-brotli))
+	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
+endef
+
+define Download/nginx-geoip2
+  VERSION:=1cabd8a1f68ea3998f94e9f3504431970f848fbf
+  SUBDIR:=nginx-geoip2
+  FILE:=ngx-http-geoip2-module-$$(VERSION).tar.xz
+  URL:=https://github.com/leev/ngx_http_geoip2_module.git
+  MIRROR_HASH:=b4bd8517f6595f28e9cea5370045df476e0f7fa9ca3611d71ba85c518f1a7eda
+  PROTO:=git
+endef
+$(eval $(call Download,nginx-geoip2))
+
+define Prepare/nginx-geoip2
+	$(eval $(Download/nginx-geoip2))
 	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
 endef
 
@@ -550,6 +572,11 @@ endif
 ifeq ($(CONFIG_NGINX_HTTP_BROTLI),y)
   $(eval $(call Download,nginx-brotli))
   $(Prepare/nginx-brotli)
+endif
+
+ifeq ($(CONFIG_NGINX_HTTP_GEOIP2),y)
+  $(eval $(call Download,nginx-geoip2))
+  $(Prepare/nginx-geoip2)
 endif
 
 ifeq ($(CONFIG_NGINX_HEADERS_MORE),y)
