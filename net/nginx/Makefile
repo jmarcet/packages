@@ -536,9 +536,6 @@ define Build/Patch
 ifneq "$(or $(CONFIG_NGINX_DAV_EXT),$(QUILT))" ""
 	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/dav-nginx,dav-nginx/)
 endif
-ifneq "$(or $(CONFIG_NGINX_LUA),$(QUILT))" ""
-	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/lua-nginx,lua-nginx/)
-endif
 ifneq "$(or $(CONFIG_NGINX_RTMP_MODULE),$(QUILT))" ""
 	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/rtmp-nginx,rtmp-nginx/)
 endif
@@ -548,7 +545,6 @@ endef
 define Quilt/Refresh/Package
 	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/nginx,nginx/)
 	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/dav-nginx,dav-nginx/)
-	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/lua-nginx,lua-nginx/)
 	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/rtmp-nginx,rtmp-nginx/)
 endef
 
@@ -562,7 +558,7 @@ ifeq ($(CONFIG_NGINX_NAXSI),y)
   $(Prepare/nginx-naxsi)
 endif
 
-ifneq "$(or $(CONFIG_NGINX_LUA),$(QUILT))" ""
+ifeq ($(CONFIG_NGINX_LUA),y)
   $(eval $(call Download,lua-nginx))
   $(Prepare/lua-nginx)
 endif
