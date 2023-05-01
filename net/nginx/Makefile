@@ -39,6 +39,7 @@ PKG_CONFIG_DEPENDS := \
 	CONFIG_NGINX_HTTP_AUTH_REQUEST \
 	CONFIG_NGINX_HTTP_AUTOINDEX \
 	CONFIG_NGINX_HTTP_GEO \
+	CONFIG_NGINX_HTTP_GEOIP2 \
 	CONFIG_NGINX_HTTP_MAP \
 	CONFIG_NGINX_HTTP_SPLIT_CLIENTS \
 	CONFIG_NGINX_HTTP_REFERER \
@@ -105,7 +106,7 @@ define Package/nginx-full
   DEPENDS+=+libpcre +nginx-ssl-util +zlib +libxml2 \
   +nginx-mod-ubus +nginx-mod-naxsi +nginx-mod-lua \
   +nginx-mod-dav-ext +nginx-mod-stream +nginx-mod-headers-more \
-  +nginx-mod-brotli +nginx-mod-rtmp +nginx-mod-ts
+  +nginx-mod-brotli +nginx-mod-rtmp +nginx-mod-ts +nginx-mod-geoip2
   EXTRA_DEPENDS:=nginx-ssl-util (>=1.5-1) (<2)
   VARIANT:=all-module
   PROVIDES += nginx-ssl
@@ -273,6 +274,9 @@ endif
 ifneq ($(CONFIG_PACKAGE_nginx-mod-ubus),)
   ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-ubus-module
 endif
+ifneq ($(CONFIG_PACKAGE_nginx-mod-geoip2),)
+  ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-geoip2
+endif
 ifneq ($(CONFIG_PACKAGE_nginx-mod-headers-more),)
   ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-headers-more
 endif
@@ -350,6 +354,26 @@ define brotli
   NGINX_MODULES += nginx-mod-brotli
 endef
 
+define geoip2
+  define Package/nginx-mod-geoip2
+	$(call Package/nginx/default)
+	DEPENDS:=+@NGINX_STREAM_CORE_MODULE +libmaxminddb
+	TITLE:=Nginx MaxMind GeoIP2 module
+  endef
+
+  define Package/nginx-mod-geoip2/description
+   Add support for MaxMind GeoIP2 database module.
+  endef
+
+  define Package/nginx-mod-geoip2/install
+	$(INSTALL_DIR) $$(1)/usr/lib/nginx/modules
+	$(INSTALL_BIN) $$(PKG_INSTALL_DIR)/usr/lib/nginx/modules/ngx_http_geoip2_module.so $$(1)/usr/lib/nginx/modules
+	$(INSTALL_BIN) $$(PKG_INSTALL_DIR)/usr/lib/nginx/modules/ngx_stream_geoip2_module.so $$(1)/usr/lib/nginx/modules
+  endef
+
+  NGINX_MODULES += nginx-mod-geoip2
+endef
+
 define lua
   define Package/nginx-mod-lua
 	$(call Package/nginx/default)
@@ -413,6 +437,7 @@ $(eval $(call module,rtmp,,ngx_rtmp, Add support for NGINX-based Media Streaming
 		DASH enhanced - https://github.com/ut0mt8/nginx-rtmp-module))
 $(eval $(call module, ts,,ngx_http_ts, Add support for MPEG-TS Live Module module.))
 $(eval $(call brotli))
+$(eval $(call geoip2))
 $(eval $(call lua))
 $(eval $(call naxsi))
 
@@ -500,6 +525,20 @@ endef
 
 define Prepare/nginx-brotli
 	$(eval $(Download/nginx-brotli))
+	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
+endef
+
+define Download/nginx-geoip2
+  VERSION:=1cabd8a1f68ea3998f94e9f3504431970f848fbf
+  SUBDIR:=nginx-geoip2
+  FILE:=ngx-http-geoip2-module-$$(VERSION).tar.xz
+  URL:=https://github.com/leev/ngx_http_geoip2_module.git
+  MIRROR_HASH:=b4bd8517f6595f28e9cea5370045df476e0f7fa9ca3611d71ba85c518f1a7eda
+  PROTO:=git
+endef
+
+define Prepare/nginx-geoip2
+	$(eval $(Download/nginx-geoip2))
 	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
 endef
 
@@ -675,6 +714,11 @@ endif
 ifneq ($(CONFIG_PACKAGE_nginx-mod-brotli),)
   $(eval $(call Download,nginx-brotli))
   $(Prepare/nginx-brotli)
+endif
+
+ifneq ($(CONFIG_PACKAGE_nginx-mod-geoip2),)
+  $(eval $(call Download,nginx-geoip2))
+  $(Prepare/nginx-geoip2)
 endif
 
 ifneq ($(CONFIG_PACKAGE_nginx-mod-headers-more),)
