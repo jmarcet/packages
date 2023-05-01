@@ -480,8 +480,6 @@ $(eval $(call resty-lrucache))
 
 PKG_CONFIG_DEPENDS += $(patsubst %,CONFIG_PACKAGE_%,$(NGINX_MODULES))
 
-TARGET_CFLAGS += -DNGX_LUA_NO_BY_LUA_BLOCK
-
 ifneq ($(CONFIG_PACKAGE_nginx-mod-lua),)
   CONFIGURE_VARS += LUAJIT_INC=$(STAGING_DIR)/usr/include/luajit-* \
 					LUAJIT_LIB=$(STAGING_DIR)/usr/lib
@@ -712,9 +710,6 @@ define Build/Patch
 ifneq "$(or $(CONFIG_PACKAGE_nginx-mod-dav-ext),$(QUILT))" ""
 	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/dav-nginx,dav-nginx/)
 endif
-ifneq "$(or $(CONFIG_PACKAGE_nginx-mod-lua),$(QUILT))" ""
-	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/lua-nginx,lua-nginx/)
-endif
 ifneq "$(or $(CONFIG_PACKAGE_nginx-mod-rtmp),$(QUILT))" ""
 	$(call PatchDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/rtmp-nginx,rtmp-nginx/)
 endif
@@ -724,7 +719,6 @@ endef
 define Quilt/Refresh/Package
 	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/nginx,nginx/)
 	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/dav-nginx,dav-nginx/)
-	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/lua-nginx,lua-nginx/)
 	$(call Quilt/RefreshDir,$(PKG_BUILD_DIR),$(PATCH_DIR)/rtmp-nginx,rtmp-nginx/)
 endef
 
@@ -738,7 +732,7 @@ ifneq ($(CONFIG_PACKAGE_nginx-mod-naxsi),)
   $(Prepare/nginx-naxsi)
 endif
 
-ifneq "$(or $(CONFIG_PACKAGE_nginx-mod-lua),$(QUILT))" ""
+ifneq ($(CONFIG_PACKAGE_nginx-mod-lua),)
   $(eval $(call Download,nginx-devel-kit))
   $(eval $(call Download,lua-nginx))
   $(Prepare/nginx-devel-kit)
