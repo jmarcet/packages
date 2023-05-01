@@ -15,7 +15,6 @@ ban_funlib="/usr/lib/banip-functions.sh"
 #
 f_conf
 f_log "info" "start banIP processing (${ban_action})"
-f_log "debug" "f_system  ::: system: ${ban_sysver:-"n/a"}, version: ${ban_ver:-"n/a"}, memory: ${ban_memory:-"0"}, cpu_cores: ${ban_cores}"
 f_genstatus "processing"
 f_tmp
 f_fetch
@@ -59,7 +58,10 @@ f_log "info" "start banIP download processes"
 if [ "${ban_allowlistonly}" = "1" ]; then
 	ban_feed=""
 else
-	f_getfeed
+	json_init
+	if ! json_load_file "${ban_feedfile}" >/dev/null 2>&1; then
+		f_log "err" "banIP feed file can't be loaded"
+	fi
 	[ "${ban_deduplicate}" = "1" ] && printf "\n" >"${ban_tmpfile}.deduplicate"
 fi
 
@@ -80,12 +82,9 @@ for feed in allowlist ${ban_feed} blocklist; do
 		continue
 	fi
 
-	# external feeds
+	# read external feed information
 	#
 	if ! json_select "${feed}" >/dev/null 2>&1; then
-		f_log "info" "unknown feed '${feed}' will be removed"
-		uci_remove_list banip global ban_feed "${feed}"
-		uci_commit "banip"
 		continue
 	fi
 	json_objects="url_4 rule_4 url_6 rule_6 flag"
@@ -93,16 +92,6 @@ for feed in allowlist ${ban_feed} blocklist; do
 		eval json_get_var feed_"${object}" '${object}' >/dev/null 2>&1
 	done
 	json_select ..
-	
-	# skip incomplete feeds
-	#
-	if { { [ -n "${feed_url_4}" ] && [ -z "${feed_rule_4}" ]; } || { [ -z "${feed_url_4}" ] && [ -n "${feed_rule_4}" ]; }; } ||
-		{ { [ -n "${feed_url_6}" ] && [ -z "${feed_rule_6}" ]; } || { [ -z "${feed_url_6}" ] && [ -n "${feed_rule_6}" ]; }; } ||
-		{ [ -z "${feed_url_4}" ] && [ -z "${feed_rule_4}" ] && [ -z "${feed_url_6}" ] && [ -z "${feed_rule_6}" ]; }; then
-		f_log "info" "incomplete feed '${feed}' will be skipped"
-		continue
-	fi
-
 	# handle IPv4/IPv6 feeds with the same/single download URL
 	#
 	if [ "${feed_url_4}" = "${feed_url_6}" ]; then
@@ -160,12 +149,11 @@ if [ "${ban_mailnotification}" = "1" ] && [ -n "${ban_mailreceiver}" ] && [ -x "
 		f_mail
 	) &
 fi
-json_cleanup
 rm -rf "${ban_lock}"
 
 # start detached log service
 #
-if [ -x "${ban_logreadcmd}" ] && [ -n "${ban_logterm%%??}" ] && [ "${ban_loglimit}" != "0" ]; then
+if [ -x "${ban_logreadcmd}" ] && [ -n "${ban_logterm%%??}" ]; then
 	f_log "info" "start detached banIP log service"
 
 	nft_expiry="$(printf "%s" "${ban_nftexpiry}" | grep -oE "([0-9]+[h|m|s]$)")"
@@ -209,7 +197,7 @@ if [ -x "${ban_logreadcmd}" ] && [ -n "${ban_logterm%%??}" ] && [ "${ban_loglimi
 # start detached no-op service loop
 #
 else
-	f_log "info" "start detached no-op banIP service"
+	f_log "info" "start detached no-op banIP service (logterms are missing)"
 	while :; do
 		sleep 1
 	done
