@@ -46,13 +46,3 @@ Signed-off-by: Šimon Bořek <simon.borek@nic.cz>
  #define LJ_ABI_SOFTFP		1
  #else
  #define LJ_ABI_SOFTFP		0
-@@ -442,9 +442,6 @@
- #if LJ_ARCH_PPC64
- #error "No support for PowerPC 64 bit mode (yet)"
- #endif
--#if defined(__NO_FPRS__) && !defined(_SOFT_FLOAT)
--#error "No support for PPC/e500 anymore (use LuaJIT 2.0)"
--#endif
- #elif LJ_TARGET_MIPS32
- #if !((defined(_MIPS_SIM_ABI32) && _MIPS_SIM == _MIPS_SIM_ABI32) || (defined(_ABIO32) && _MIPS_SIM == _ABIO32))
- #error "Only o32 ABI supported for MIPS32"
