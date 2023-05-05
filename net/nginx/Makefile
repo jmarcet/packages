@@ -104,6 +104,7 @@ define Package/nginx-full
   TITLE += with ALL module selected
   DEPENDS+=+libpcre +nginx-ssl-util +zlib +libxml2 \
   +nginx-mod-ubus +nginx-mod-naxsi +nginx-mod-lua \
+  +nginx-mod-lua-resty-core +nginx-mod-lua-resty-lrucache \
   +nginx-mod-dav-ext +nginx-mod-stream +nginx-mod-headers-more \
   +nginx-mod-brotli +nginx-mod-rtmp +nginx-mod-ts
   EXTRA_DEPENDS:=nginx-ssl-util (>=1.5-1) (<2)
@@ -261,6 +262,7 @@ ifneq ($(CONFIG_PACKAGE_nginx-mod-naxsi),)
   ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-naxsi/naxsi_src
 endif
 ifneq ($(CONFIG_PACKAGE_nginx-mod-lua),)
+  ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/nginx-devel-kit
   ADDITIONAL_MODULES += --add-dynamic-module=$(PKG_BUILD_DIR)/lua-nginx
 endif
 ifneq ($(CONFIG_PACKAGE_nginx-mod-dav-ext),)
@@ -349,6 +351,26 @@ define brotli
   NGINX_MODULES += nginx-mod-brotli
 endef
 
+define lua
+  define Package/nginx-mod-lua
+	$(call Package/nginx/default)
+	DEPENDS:=+luajit
+	TITLE:=Nginx Lua module
+  endef
+
+  define Package/nginx-mod-lua/description
+   Enable Lua module
+  endef
+
+  define Package/nginx-mod-lua/install
+	$(INSTALL_DIR) $$(1)/usr/lib/nginx/modules
+	$(INSTALL_BIN) $$(PKG_INSTALL_DIR)/usr/lib/nginx/modules/ndk_http_module.so $$(1)/usr/lib/nginx/modules
+	$(INSTALL_BIN) $$(PKG_INSTALL_DIR)/usr/lib/nginx/modules/ngx_http_lua_module.so $$(1)/usr/lib/nginx/modules
+  endef
+
+  NGINX_MODULES += nginx-mod-lua
+endef
+
 define naxsi
   define Package/nginx-mod-naxsi
 	$(call Package/nginx/default)
@@ -375,7 +397,49 @@ define naxsi
   NGINX_MODULES += nginx-mod-naxsi
 endef
 
-$(eval $(call module,lua, +luajit,ngx_http_lua, Enable Lua module))
+define resty-core
+  define Package/nginx-mod-lua-resty-core
+	$(call Package/nginx/default)
+	DEPENDS:=+nginx-mod-lua
+	TITLE:=Nginx Lua OpenResty core module
+  endef
+
+  define Package/nginx-mod-lua-resty-core/description
+   Enable Lua OpenResty core module
+  endef
+
+  define Package/nginx-mod-lua-resty-core/install
+	$(INSTALL_DIR) $$(1)/usr/lib/lua/ngx/ssl
+	$(INSTALL_DIR) $$(1)/usr/lib/lua/resty/core
+	$(INSTALL_BIN) $$(PKG_BUILD_DIR)/lua-resty-core/lib/ngx/*.lua $$(1)/usr/lib/lua/ngx
+	$(INSTALL_BIN) $$(PKG_BUILD_DIR)/lua-resty-core/lib/ngx/ssl/*.lua $$(1)/usr/lib/lua/ngx/ssl
+	$(INSTALL_BIN) $$(PKG_BUILD_DIR)/lua-resty-core/lib/resty/*.lua $$(1)/usr/lib/lua/resty
+	$(INSTALL_BIN) $$(PKG_BUILD_DIR)/lua-resty-core/lib/resty/core/*.lua $$(1)/usr/lib/lua/resty/core
+  endef
+
+  NGINX_MODULES += nginx-mod-lua-resty-core
+endef
+
+define resty-lrucache
+  define Package/nginx-mod-lua-resty-lrucache
+	$(call Package/nginx/default)
+	DEPENDS:=+nginx-mod-lua
+	TITLE:=Nginx Lua OpenResty lrucache module
+  endef
+
+  define Package/nginx-mod-lua-resty-lrucache/description
+   Enable Lua OpenResty lrucache module
+  endef
+
+  define Package/nginx-mod-lua-resty-lrucache/install
+	$(INSTALL_DIR) $$(1)/usr/lib/lua/resty/lrucache
+	$(INSTALL_BIN) $$(PKG_BUILD_DIR)/lua-resty-lrucache/lib/resty/*.lua $$(1)/usr/lib/lua/resty
+	$(INSTALL_BIN) $$(PKG_BUILD_DIR)/lua-resty-lrucache/lib/resty/lrucache/*.lua $$(1)/usr/lib/lua/resty/lrucache
+  endef
+
+  NGINX_MODULES += nginx-mod-lua-resty-lrucache
+endef
+
 $(eval $(call module,stream, +@NGINX_STREAM_CORE_MODULE,ngx_stream, Add support for NGINX request streaming.))
 $(eval $(call module,ubus, +libubus +libjson-c +libblobmsg-json +@NGINX_UBUS,ngx_http_ubus, Enable UBUS api support directly from the server.))
 $(eval $(call module,dav-ext, +@NGINX_DAV +libxml2,ngx_http_dav_ext, Enable the WebDAV methods PROPFIND OPTIONS LOCK UNLOCK.))
@@ -384,7 +448,10 @@ $(eval $(call module,rtmp,,ngx_rtmp, Add support for NGINX-based Media Streaming
 		DASH enhanced - https://github.com/ut0mt8/nginx-rtmp-module))
 $(eval $(call module, ts,,ngx_http_ts, Add support for MPEG-TS Live Module module.))
 $(eval $(call brotli))
+$(eval $(call lua))
 $(eval $(call naxsi))
+$(eval $(call resty-core))
+$(eval $(call resty-lrucache))
 
 PKG_CONFIG_DEPENDS += $(patsubst %,CONFIG_PACKAGE_%,$(NGINX_MODULES))
 
@@ -516,6 +583,20 @@ define Prepare/nginx-naxsi
 	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
 endef
 
+define Download/nginx-devel-kit
+  VERSION:=b4642d6ca01011bd8cd30b253f5c3872b384fd21
+  SUBDIR:=nginx-devel-kit
+  FILE:=nginx-devel-kit-$$(VERSION).tar.xz
+  URL:=https://github.com/simplresty/ngx_devel_kit.git
+  MIRROR_HASH:=55b5d4a0f77d7d67544e54b96d701246b6946e7d0832f728d1aa2cc89ecc401e
+  PROTO:=git
+endef
+
+define Prepare/nginx-devel-kit
+	$(eval $(Download/nginx-devel-kit))
+	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
+endef
+
 define Download/lua-nginx
   VERSION:=68acad14e4a8f42e31d4a4bb5ed44d6f5b55fc1c
   SUBDIR:=lua-nginx
@@ -527,6 +608,34 @@ endef
 
 define Prepare/lua-nginx
 	$(eval $(Download/lua-nginx))
+	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
+endef
+
+define Download/lua-resty-core
+  VERSION:=698d7de385c7d58d00f4853b6a9ab2ab10243ca5
+  SUBDIR:=lua-resty-core
+  FILE:=lua-resty-core-module-$$(VERSION).tar.xz
+  URL:=https://github.com/openresty/lua-resty-core.git
+  MIRROR_HASH:=366f24e1ba6221e34f6ba20ab29146438438f88c89fd71f9500d169b3f5aedf0
+  PROTO:=git
+endef
+
+define Prepare/lua-resty-core
+	$(eval $(Download/lua-resty-core))
+	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
+endef
+
+define Download/lua-resty-lrucache
+  VERSION:=a79615ec9dc547fdb4aaee59ef8f5a50648ce9fd
+  SUBDIR:=lua-resty-lrucache
+  FILE:=lua-resty-lrucache-module-$$(VERSION).tar.xz
+  URL:=https://github.com/openresty/lua-resty-lrucache.git
+  MIRROR_HASH:=7122a7f5f00fa0a1bb8e84f82fe1cc4ad7c368093508a8c04948b1c8d770a88f
+  PROTO:=git
+endef
+
+define Prepare/lua-resty-lrucache
+	$(eval $(Download/lua-resty-lrucache))
 	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
 endef
 
@@ -591,8 +700,20 @@ ifneq ($(CONFIG_PACKAGE_nginx-mod-naxsi),)
 endif
 
 ifneq "$(or $(CONFIG_PACKAGE_nginx-mod-lua),$(QUILT))" ""
+  $(eval $(call Download,nginx-devel-kit))
   $(eval $(call Download,lua-nginx))
+  $(Prepare/nginx-devel-kit)
   $(Prepare/lua-nginx)
+
+  ifneq ($(CONFIG_PACKAGE_nginx-mod-lua-resty-core),)
+    $(eval $(call Download,lua-resty-core))
+    $(Prepare/lua-resty-core)
+  endif
+
+  ifneq ($(CONFIG_PACKAGE_nginx-mod-lua-resty-lrucache),)
+    $(eval $(call Download,lua-resty-lrucache))
+    $(Prepare/lua-resty-lrucache)
+  endif
 endif
 
 ifneq ($(CONFIG_PACKAGE_nginx-mod-brotli),)
