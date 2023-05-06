@@ -1,0 +1,14 @@
+--- ./source3/locking/share_mode_lock.c-orig	2023-01-18 16:32:24.000000000 +0100
++++ ./source3/locking/share_mode_lock.c	2023-05-06 21:08:48.727470479 +0200
+@@ -68,10 +68,7 @@ struct share_mode_lock {
+ #define DBGC_CLASS DBGC_LOCKING
+ 
+ #define DBG_GET_SHARE_MODE_LOCK(__status, ...) \
+-	DBG_PREFIX( \
+-		NT_STATUS_EQUAL(__status, NT_STATUS_NOT_FOUND) ? \
+-		DBGLVL_DEBUG : DBGLVL_ERR, \
+-		(__VA_ARGS__))
++	DBG_PREFIX(DBGLVL_DEBUG, (__VA_ARGS__))
+ 
+ /* the locking database handle */
+ static struct g_lock_ctx *lock_ctx;
