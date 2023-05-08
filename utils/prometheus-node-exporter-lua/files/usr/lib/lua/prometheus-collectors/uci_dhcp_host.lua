@@ -5,7 +5,7 @@ local function scrape()
   local metric_uci_host = metric("uci_dhcp_host", "gauge")
 
   curs:foreach("dhcp", "host", function(s)
-    if s[".type"] == "host" then
+    if s[".type"] == "host" and s["mac"] and s["dns"] and s["ip"] then
       labels = {name=s["name"], mac=string.upper(s["mac"]), dns=s["dns"], ip=s["ip"]}
       metric_uci_host(labels, 1)
     end
