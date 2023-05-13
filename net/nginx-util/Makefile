@@ -11,7 +11,7 @@ include $(INCLUDE_DIR)/cmake.mk
 CMAKE_OPTIONS+= -DUBUS=y
 CMAKE_OPTIONS+= -DVERSION=$(PKG_VERSION)
 
-TARGET_CFLAGS+= -Wno-error=deprecated-declarations
+TARGET_CFLAGS+= -Wno-error=deprecated-declarations -Wno-error=pessimizing-move
 
 define Package/nginx-ssl-util/default
   SECTION:=net
