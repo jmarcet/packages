@@ -382,8 +382,6 @@ define BuildModule
   $$(eval $$(call BuildPackage,nginx-mod-$(1)))
 endef
 
-TARGET_CFLAGS += -DNGX_LUA_NO_BY_LUA_BLOCK
-
 ifneq ($(CONFIG_PACKAGE_nginx-mod-lua),)
   CONFIGURE_VARS += LUAJIT_INC=$(STAGING_DIR)/usr/include/luajit-* \
 					LUAJIT_LIB=$(STAGING_DIR)/usr/lib
