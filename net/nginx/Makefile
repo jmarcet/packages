@@ -198,8 +198,6 @@ endef
 define Package/nginx-mod-luci/install
 	$(INSTALL_DIR) $(1)/etc/nginx/conf.d
 	$(INSTALL_CONF) ./files-luci-support/luci.locations $(1)/etc/nginx/conf.d/
-	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(INSTALL_BIN) ./files-luci-support/60_nginx-luci-support $(1)/etc/uci-defaults/60_nginx-luci-support
 endef
 
 define Download/nginx-mod-geoip2
