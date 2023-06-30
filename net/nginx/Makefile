@@ -244,6 +244,13 @@ define Package/nginx-mod-lua-resty-core/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/nginx-mod-lua-resty-core/lib/resty/core/*.lua $(1)/usr/lib/lua/resty/core
 endef
 
+define Download/nginx-mod-geoip2
+  VERSION:=1cabd8a1f68ea3998f94e9f3504431970f848fbf
+  URL:=https://github.com/leev/ngx_http_geoip2_module.git
+  MIRROR_HASH:=b4bd8517f6595f28e9cea5370045df476e0f7fa9ca3611d71ba85c518f1a7eda
+  PROTO:=git
+endef
+
 define Download/nginx-mod-headers-more
   SOURCE_DATE:=2022-07-17
   VERSION:=bea1be3bbf6af28f6aa8cf0c01c07ee1637e2bd0
