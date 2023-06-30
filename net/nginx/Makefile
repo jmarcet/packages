@@ -29,6 +29,8 @@ PKG_BUILD_FLAGS:=gc-sections
 PKG_MOD_EXTRA := \
 	geoip2 \
 	lua \
+	lua-resty-core \
+	lua-resty-lrucache \
 	rtmp \
 	dav-ext \
 	naxsi \
@@ -204,13 +206,39 @@ define Download/nginx-mod-geoip2
   PROTO:=git
 endef
 
+define Package/nginx-mod-lua-resty-core
+  $(call Package/nginx/default)
+  DEPENDS:=+nginx-mod-lua
+  TITLE:=Nginx Lua OpenResty core module
+endef
+
+define Package/nginx-mod-lua-resty-lrucache
+  $(call Package/nginx/default)
+  DEPENDS:=+nginx-mod-lua
+  TITLE:=Nginx Lua OpenResty lrucache module
+endef
+
+define Package/nginx-mod-lua-resty-core/install
+	$(INSTALL_DIR) $(1)/usr/lib/lua/ngx/ssl
+	$(INSTALL_DIR) $(1)/usr/lib/lua/resty/core
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/nginx-mod-lua-resty-core/lib/ngx/*.lua $(1)/usr/lib/lua/ngx
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/nginx-mod-lua-resty-core/lib/ngx/ssl/*.lua $(1)/usr/lib/lua/ngx/ssl
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/nginx-mod-lua-resty-core/lib/resty/*.lua $(1)/usr/lib/lua/resty
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/nginx-mod-lua-resty-core/lib/resty/core/*.lua $(1)/usr/lib/lua/resty/core
+endef
+
+define Package/nginx-mod-lua-resty-lrucache/install
+	$(INSTALL_DIR) $(1)/usr/lib/lua/resty/lrucache
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/nginx-mod-lua-resty-lrucache/lib/resty/*.lua $(1)/usr/lib/lua/resty
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/nginx-mod-lua-resty-lrucache/lib/resty/lrucache/*.lua $(1)/usr/lib/lua/resty/lrucache
+endef
+
 define Download/nginx-mod-headers-more
   VERSION:=bea1be3bbf6af28f6aa8cf0c01c07ee1637e2bd0
   URL:=https://github.com/openresty/headers-more-nginx-module.git
   MIRROR_HASH:=3617bbf7a935208a1d8d5f86a8f9b770f6987e4d2b5663a9ab1b777217e3066b
   PROTO:=git
 endef
-
 
 define Download/nginx-mod-brotli
   VERSION:=e505dce68acc190cc5a1e780a3b0275e39f160ca
@@ -244,6 +272,20 @@ define Download/nginx-mod-lua
   VERSION:=68acad14e4a8f42e31d4a4bb5ed44d6f5b55fc1c
   URL:=https://github.com/openresty/lua-nginx-module.git
   MIRROR_HASH:=366f24e1ba6221e34f6ba20ab29146438438f88c89fd71f9500d169b3f5aedf0
+  PROTO:=git
+endef
+
+define Download/nginx-mod-lua-resty-core
+  VERSION:=698d7de385c7d58d00f4853b6a9ab2ab10243ca5
+  URL:=https://github.com/openresty/lua-resty-core.git
+  MIRROR_HASH:=366f24e1ba6221e34f6ba20ab29146438438f88c89fd71f9500d169b3f5aedf0
+  PROTO:=git
+endef
+
+define Download/nginx-mod-lua-resty-lrucache
+  VERSION:=a79615ec9dc547fdb4aaee59ef8f5a50648ce9fd
+  URL:=https://github.com/openresty/lua-resty-lrucache.git
+  MIRROR_HASH:=7122a7f5f00fa0a1bb8e84f82fe1cc4ad7c368093508a8c04948b1c8d770a88f
   PROTO:=git
 endef
 
@@ -406,12 +448,14 @@ CONFIGURE_ARGS += \
 	$(if $(call IsEnabled,NGINX_HTTP_SUB),--with-http_sub_module) \
 	$(if $(CONFIG_PACKAGE_nginx-mod-stream),--with-stream=dynamic --with-stream_ssl_module --with-stream_ssl_preread_module) \
 	$(if $(CONFIG_PACKAGE_nginx-mod-naxsi),--add-dynamic-module=$(PKG_BUILD_DIR)/nginx-mod-naxsi/naxsi_src) \
-	$(foreach m,$(filter-out naxsi,$(PKG_MOD_EXTRA)), \
+	$(foreach m,$(filter-out lua-resty-core lua-resty-lrucache naxsi,$(PKG_MOD_EXTRA)), \
 		$(if $(CONFIG_PACKAGE_nginx-mod-$(m)),--add-dynamic-module=$(PKG_BUILD_DIR)/nginx-mod-$(m)))
 
 $(eval $(call BuildPackage,nginx-ssl))
 $(eval $(call BuildPackage,nginx-full))
 $(eval $(call BuildPackage,nginx-mod-luci))
+$(eval $(call BuildPackage,nginx-mod-lua-resty-core))
+$(eval $(call BuildPackage,nginx-mod-lua-resty-lrucache))
 $(eval $(call BuildModule,stream,+@NGINX_STREAM_CORE_MODULE, \
 	ngx_stream, Add support for NGINX request streaming.))
 $(eval $(call BuildModule,lua,+luajit,ngx_http_lua, \
