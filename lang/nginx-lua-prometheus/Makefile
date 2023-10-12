@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=nginx-lua-prometheus
-PKG_VERSION:=0.20221218
+PKG_VERSION:=0.20230607
 PKG_RELEASE:=1
 PKG_MAINTAINER:=Javier Marcet <javier@marcet.info>
 PKG_LICENSE:=MIT
@@ -9,7 +9,7 @@ PKG_LICENSE_FILES:=LICENSE
 
 PKG_SOURCE:=$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/knyar/nginx-lua-prometheus/archive/refs/tags
-PKG_HASH:=ab23987fd592291b3dea490d1faf0a74e3b43f6ea2e5d7355de55b426ee7d990
+PKG_HASH:=4e5be322a24d4de2b5e8e5c54c43b02a77d9b6ea525347078531c5517b93d9dc
 
 HOST_BUILD_DEPENDS:=lua/host luarocks/host
 
