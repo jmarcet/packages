@@ -1581,10 +1581,7 @@ f_monitor() {
 			while read -r line; do
 				proto=""
 				: >"${ban_rdapfile}"
-				if [ -z "${daemon}" ]; then
-					daemon="$(printf "%s" "${line}" | "${ban_awkcmd}" 'BEGIN{RS="dropbear"}{if(!seen[RT]++)printf "%s",RT}')"
-					[ -z "${daemon}" ] && daemon="sshd"
-				fi
+				[ -z "${daemon}" ] && daemon="$(printf "%s" "${line}" | "${ban_awkcmd}" 'BEGIN{RS="dropbear"}{if(!seen[RT]++)printf "%s",RT}')" || daemon="sshd"
 				ip="$(printf "%s" "${line}" | "${ban_awkcmd}" 'BEGIN{RS="(([0-9]{1,3}\\.){3}[0-9]{1,3})+"}{if(!seen[RT]++)printf "%s ",RT}')"
 				ip="$(f_trim "${ip}")"
 				ip="${ip##* }"
