@@ -22,7 +22,7 @@ define Package/lualogging
   CATEGORY:=Languages
   TITLE:=Simple API to use logging features in Lua
   URL:=https://github.com/lunarmodules/lualogging
-  DEPENDS:= +lua +luajit +luasocket
+  DEPENDS:= +lua +luasocket
 endef
 
 define Package/lualogging/description
