@@ -21,6 +21,7 @@ PKG_CPE_ID:=cpe:/a:git-scm:git
 
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
+PKG_BUILD_FLAGS:=no-lto
 PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
