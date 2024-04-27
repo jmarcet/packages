@@ -595,30 +595,24 @@ f_etag() {
 # build initial nft file with base table, chains and rules
 #
 f_nftinit() {
-	local wan_dev vlan_allow vlan_block log_ct log_icmp log_syn log_udp log_tcp feed_log feed_rc flag tmp_proto tmp_port allow_dport file="${1}"
+	local wan_dev vlan_allow vlan_block log_ct log_icmp log_syn log_udp log_tcp feed_log feed_rc allow_proto allow_dport flag file="${1}"
 
 	wan_dev="$(printf "%s" "${ban_dev}" | "${ban_sedcmd}" 's/^/\"/;s/$/\"/;s/ /\", \"/g')"
 	[ -n "${ban_vlanallow}" ] && vlan_allow="$(printf "%s" "${ban_vlanallow%%?}" | "${ban_sedcmd}" 's/^/\"/;s/$/\"/;s/ /\", \"/g')"
 	[ -n "${ban_vlanblock}" ] && vlan_block="$(printf "%s" "${ban_vlanblock%%?}" | "${ban_sedcmd}" 's/^/\"/;s/$/\"/;s/ /\", \"/g')"
 
 	for flag in ${ban_allowflag}; do
-		if [ "${flag}" = "tcp" ] || [ "${flag}" = "udp" ]; then
-			if [ -z "${tmp_proto}" ]; then
-				tmp_proto="${flag}"
-			elif ! printf "%s" "${tmp_proto}" | "${ban_grepcmd}" -qw "${flag}"; then
-				tmp_proto="${tmp_proto}, ${flag}"
-			fi
-		elif [ -n "${flag//[![:digit]-]/}" ]; then
-			if [ -z "${tmp_port}" ]; then
-				tmp_port="${flag}"
-			elif ! printf "%s" "${tmp_port}" | "${ban_grepcmd}" -qw "${flag}"; then
-				tmp_port="${tmp_port}, ${flag}"
+		if [ -z "${allow_proto}" ] && { [ "${flag}" = "tcp" ] || [ "${flag}" = "udp" ]; }; then
+			allow_proto="${flag}"
+		elif [ -n "${allow_proto}" ] && [ -n "${flag//[![:digit]-]/}" ] && ! printf "%s" "${allow_dport}" | "${ban_grepcmd}" -qw "${flag}"; then
+			if [ -z "${allow_dport}" ]; then
+				allow_dport="${flag}"
+			else
+				allow_dport="${allow_dport}, ${flag}"
 			fi
 		fi
 	done
-	if [ -n "${tmp_proto}" ] && [ -n "${tmp_port}" ]; then
-		allow_dport="meta l4proto { ${tmp_proto} } th dport { ${tmp_port} }"
-	fi
+	[ -n "${allow_dport}" ] && allow_dport="${allow_proto} dport { ${allow_dport} }"
 
 	if [ "${ban_logprerouting}" = "1" ]; then
 		log_icmp="log level ${ban_nftloglevel} prefix \"banIP/pre-icmp/drop: \""
@@ -703,7 +697,7 @@ f_nftinit() {
 #
 f_down() {
 	local log_input log_forwardwan log_forwardlan start_ts end_ts tmp_raw tmp_load tmp_file split_file ruleset_raw handle rc etag_rc
-	local expr cnt_set cnt_dl restore_rc feed_direction feed_rc feed_log feed_comp feed_target feed_dport tmp_proto tmp_port flag
+	local expr cnt_set cnt_dl restore_rc feed_direction feed_rc feed_log feed_comp feed_proto feed_dport feed_target
 	local feed="${1}" proto="${2}" feed_url="${3}" feed_rule="${4}" feed_flag="${5}"
 
 	start_ts="$(date +%s)"
@@ -762,25 +756,19 @@ f_down() {
 	# prepare feed flags
 	#
 	for flag in ${feed_flag}; do
-		if [ "${flag}" = "gz" ]; then
+		if [ "${flag}" = "gz" ] && ! printf "%s" "${feed_comp}" | "${ban_grepcmd}" -qw "${flag}"; then
 			feed_comp="${flag}"
-		elif [ "${flag}" = "tcp" ] || [ "${flag}" = "udp" ]; then
-			if [ -z "${tmp_proto}" ]; then
-				tmp_proto="${flag}"
-			elif ! printf "%s" "${tmp_proto}" | "${ban_grepcmd}" -qw "${flag}"; then
-				tmp_proto="${tmp_proto}, ${flag}"
-			fi
-		elif [ -n "${flag//[![:digit]-]/}" ]; then
-			if [ -z "${tmp_port}" ]; then
-				tmp_port="${flag}"
-			elif ! printf "%s" "${tmp_port}" | "${ban_grepcmd}" -qw "${flag}"; then
-				tmp_port="${tmp_port}, ${flag}"
+		elif [ -z "${feed_proto}" ] && { [ "${flag}" = "tcp" ] || [ "${flag}" = "udp" ]; }; then
+			feed_proto="${flag}"
+		elif [ -n "${feed_proto}" ] && [ -n "${flag//[![:digit]-]/}" ] && ! printf "%s" "${feed_dport}" | "${ban_grepcmd}" -qw "${flag}"; then
+			if [ -z "${feed_dport}" ]; then
+				feed_dport="${flag}"
+			else
+				feed_dport="${feed_dport}, ${flag}"
 			fi
 		fi
 	done
-	if [ -n "${tmp_proto}" ] && [ -n "${tmp_port}" ]; then
-		feed_dport="meta l4proto { ${tmp_proto} } th dport { ${tmp_port} }"
-	fi
+	[ -n "${feed_dport}" ] && feed_dport="${feed_proto} dport { ${feed_dport} }"
 
 	# chain/rule maintenance
 	#
