@@ -1,0 +1,63 @@
+diff -pru ./etc/setup.d/05file-orig ./etc/setup.d/05file
+--- ./etc/setup.d/05file-orig	2022-08-15 20:17:42.000000000 +0200
++++ ./etc/setup.d/05file	2024-05-12 11:09:44.680731332 +0200
+@@ -28,17 +28,17 @@ check_filetype()
+ {
+     if echo "$CHROOT_FILE" | grep -q '\.tar$'; then
+         filetype="tar"
+-    elif echo "$CHROOT_FILE" | egrep -q '(\.tar\.gz|\.tgz)$'; then
++    elif echo "$CHROOT_FILE" | grep -E -q '(\.tar\.gz|\.tgz)$'; then
+         filetype="tgz"
+-    elif echo "$CHROOT_FILE" | egrep -q '(\.tar\.bz2|\.tbz)$'; then
++    elif echo "$CHROOT_FILE" | grep -E -q '(\.tar\.bz2|\.tbz)$'; then
+         filetype="tbz"
+-    elif echo "$CHROOT_FILE" | egrep -q '(\.tar\.xz|\.txz)$'; then
++    elif echo "$CHROOT_FILE" | grep -E -q '(\.tar\.xz|\.txz)$'; then
+         filetype="txz"
+-    elif echo "$CHROOT_FILE" | egrep -q '(\.tar\.lzo|\.tzo)$'; then
++    elif echo "$CHROOT_FILE" | grep -E -q '(\.tar\.lzo|\.tzo)$'; then
+         filetype="tzo"
+-    elif echo "$CHROOT_FILE" | egrep -q '(\.tar\.lz4|\.tlz4)$'; then
++    elif echo "$CHROOT_FILE" | grep -E -q '(\.tar\.lz4|\.tlz4)$'; then
+         filetype="tlz4"
+-    elif echo "$CHROOT_FILE" | egrep -q '\.tar\.zstd$'; then
++    elif echo "$CHROOT_FILE" | grep -E -q '\.tar\.zstd$'; then
+         filetype="tzstd"
+     else
+         fatal "Unsupported filetype for $CHROOT_FILE"
+diff -pru ./etc/setup.d/15killprocs-orig ./etc/setup.d/15killprocs
+--- ./etc/setup.d/15killprocs-orig	2022-08-15 20:17:42.000000000 +0200
++++ ./etc/setup.d/15killprocs	2024-05-12 11:09:35.694627144 +0200
+@@ -45,7 +45,7 @@ do_kill_all()
+     fi
+ 
+     info "Killing processes run inside $1"
+-    ls /proc | egrep '^[[:digit:]]+$' |
++    ls /proc | grep -E '^[[:digit:]]+$' |
+     while read pid; do
+         # Check if process root are the same device/inode as chroot
+         # root (for efficiency)
+diff -pru ./etc/setup.d/20copyfiles-orig ./etc/setup.d/20copyfiles
+--- ./etc/setup.d/20copyfiles-orig	2022-08-15 20:17:42.000000000 +0200
++++ ./etc/setup.d/20copyfiles	2024-05-12 11:09:24.718499883 +0200
+@@ -80,7 +80,7 @@ if [ $STAGE = "setup-start" ] || [ $STAG
+     if [ -n "$SETUP_COPYFILES" ]; then
+         if [ -f "$SETUP_COPYFILES" ]; then
+             while read file; do
+-                if echo "$file" | egrep -q '^(#|$)' ; then
++                if echo "$file" | grep -E -q '^(#|$)' ; then
+                     continue
+                 fi
+                 if echo "$file" | grep -q '^/'; then
+diff -pru ./etc/setup.d/20nssdatabases-orig ./etc/setup.d/20nssdatabases
+--- ./etc/setup.d/20nssdatabases-orig	2022-08-15 20:17:42.000000000 +0200
++++ ./etc/setup.d/20nssdatabases	2024-05-12 11:09:30.439566215 +0200
+@@ -37,7 +37,7 @@ if [ $STAGE = "setup-start" ] || [ $STAG
+     if [ -n "$SETUP_NSSDATABASES" ]; then
+         if [ -f "$SETUP_NSSDATABASES" ]; then
+             while read db; do
+-                if echo "$db" | egrep -q '^(#|$)' ; then
++                if echo "$db" | grep -E -q '^(#|$)' ; then
+                     continue
+                 fi
+ 
