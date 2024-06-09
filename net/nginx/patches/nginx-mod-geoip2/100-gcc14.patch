@@ -1,0 +1,16 @@
+--- ./nginx-mod-geoip2/ngx_http_geoip2_module.c-orig	2024-06-09 19:09:39.204444331 +0200
++++ ./nginx-mod-geoip2/ngx_http_geoip2_module.c	2024-06-09 19:11:14.518255720 +0200
+@@ -174,11 +174,11 @@ ngx_http_geoip2_variable(ngx_http_reques
+         addr.socklen = r->connection->socklen;
+ 
+ #if defined(nginx_version) && nginx_version >= 1023000
+-        xfwd = r->headers_in.x_forwarded_for;
++        xfwd = (void *) r->headers_in.x_forwarded_for;
+ 
+         if (xfwd != NULL && gcf->proxies != NULL) {
+ #else
+-        xfwd = &r->headers_in.x_forwarded_for;
++        xfwd = (void *) &r->headers_in.x_forwarded_for;
+ 
+         if (xfwd->nelts > 0 && gcf->proxies != NULL) {
+ #endif
