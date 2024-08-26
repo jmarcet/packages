@@ -42,6 +42,15 @@ find_network_device() {
 
 boot() {
 	uciadd
+	test -e /opt/docker/.update && return
+	while test -z "$(ifstatus wan | grep '.up.: true')"; do
+		logger -t dockerd "Waiting for wan..."
+		sleep 1
+	done
+	test -f /etc/rc.dockerd && sh /etc/rc.dockerd &
+	while ! /etc/init.d/dnsmasq running; do sleep 1; done
+	while ! mountpoint -q /sys/fs/cgroup; do sleep 1; done
+	[ $( grep '^cgroup ' /proc/mounts | wc -l ) -lt 15 ] && return
 	rc_procd start_service
 }
 
