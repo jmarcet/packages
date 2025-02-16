@@ -29,8 +29,10 @@ f_rmdir "${ban_errordir}"
 
 # firewall/fw4 pre-check
 #
-if ! /etc/init.d/firewall status >/dev/null 2>&1; then
-	f_log "info" "the main firewall is not running"
+if [ ! -x "${ban_fw4cmd}" ] || [ ! -x "/etc/init.d/firewall" ]; then
+	f_log "err" "firewall/fw4 not found"
+elif ! /etc/init.d/firewall status >/dev/null 2>&1; then
+	f_log "info" "firewall/fw4 is not running"
 fi
 
 # init banIP nftables namespace
@@ -39,14 +41,16 @@ if [ "${ban_action}" != "reload" ] || ! "${ban_nftcmd}" list chain inet banIP pr
 	f_nftinit "${ban_tmpfile}".init.nft
 fi
 
-# start banIP processing
-#
-f_log "info" "start banIP download processes"
-f_getfeed
-[ "${ban_deduplicate}" = "1" ] && printf "\n" >"${ban_tmpfile}.deduplicate"
-
 # handle downloads
 #
+f_log "info" "start banIP download processes"
+if [ "${ban_allowlistonly}" = "1" ]; then
+	ban_feed=""
+else
+	f_getfeed
+fi
+[ "${ban_deduplicate}" = "1" ] && printf "\n" >"${ban_tmpfile}.deduplicate"
+
 cnt="1"
 for feed in allowlist ${ban_feed} blocklist; do
 	# local feeds (sequential processing)
