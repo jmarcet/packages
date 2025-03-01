@@ -98,10 +98,10 @@ for feed in allowlist ${ban_feed} blocklist; do
 		fi
 		if [ "${feed_url_4}" = "${feed_url_6}" ]; then
 			feed_url_6="local"
-			wait -n
+			wait
 		else
 			hold="$((cnt % ban_cores))"
-			[ "${hold}" = "0" ] && wait -n
+			[ "${hold}" = "0" ] && wait
 			cnt="$((cnt + 1))"
 		fi
 	fi
@@ -119,9 +119,10 @@ for feed in allowlist ${ban_feed} blocklist; do
 		fi
 		cnt="$((cnt + 1))"
 		hold="$((cnt % ban_cores))"
-		[ "${hold}" = "0" ] && wait -n
+		[ "${hold}" = "0" ] && wait
 	fi
 done
+wait
 f_rmset
 f_rmdir "${ban_tmpdir}"
 f_genstatus "active"
@@ -133,14 +134,13 @@ cnt="1"
 for list in allowlist blocklist; do
 	(f_lookup "${list}") &
 	hold="$((cnt % ban_cores))"
-	[ "${hold}" = "0" ] && wait -n
+	[ "${hold}" = "0" ] && wait
 	cnt="$((cnt + 1))"
 done
 wait
 
 # end processing
 #
-f_log "info" "finish banIP processing"
 (
 	sleep 5
 	if [ "${ban_mailnotification}" = "1" ] && [ -n "${ban_mailreceiver}" ] && [ -x "${ban_mailcmd}" ]; then
