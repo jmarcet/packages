@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=coreutils
 PKG_VERSION:=9.6
-PKG_RELEASE:=4
+PKG_RELEASE:=3
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=@GNU/coreutils
@@ -22,9 +22,7 @@ PKG_CPE_ID:=cpe:/a:gnu:coreutils
 
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
-ifeq ($(CONFIG_GCC_VERSION_14),y)
-	PKG_FIXUP:=autoreconf
-endif
+PKG_FIXUP:=autoreconf
 
 include $(INCLUDE_DIR)/package.mk
 
