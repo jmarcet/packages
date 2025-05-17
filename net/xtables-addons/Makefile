@@ -193,18 +193,6 @@ define Package/iptgeoip/install
 	touch $(1)/usr/share/xt_geoip/.keep
 endef
 
-
-define KernelPackage/nf-nathelper-rtsp
-  SUBMENU:=Netfilter Extensions
-  TITLE:=Conntrack and NAT for rtsp
-  DEPENDS:=+kmod-nf-conntrack +kmod-nf-nat
-  FILES:=$(PKG_BUILD_DIR)/extensions/rtsp/nf_conntrack_rtsp.$(LINUX_KMOD_SUFFIX) \
-    $(PKG_BUILD_DIR)/extensions/rtsp/nf_nat_rtsp.$(LINUX_KMOD_SUFFIX)
-  AUTOLOAD:=$(call AutoProbe,nf_conntrack_rtsp nf_nat_rtsp)
-  PROVIDES:=kmod-ipt-nathelper-rtsp
-endef
-
-
 # compat_xtables removed (module no longer exists in 3.30)
 $(eval $(call BuildTemplate,account,ACCOUNT,xt_ACCOUNT,ACCOUNT/xt_ACCOUNT,))
 $(eval $(call BuildTemplate,asn,asn,xt_asn,xt_asn,))
@@ -223,6 +211,7 @@ $(eval $(call BuildTemplate,length2,length2,xt_length2,xt_length2,))
 $(eval $(call BuildTemplate,logmark,LOGMARK,xt_LOGMARK,xt_LOGMARK,))
 $(eval $(call BuildTemplate,lscan,lscan,xt_lscan,xt_lscan,))
 $(eval $(call BuildTemplate,lua,Lua PacketScript,xt_LUA,LUA/xt_LUA,+kmod-ipt-conntrack-extra))
+$(eval $(call BuildTemplate,nathelper-rtsp,RTSP Conntrack and NAT,,rtsp/nf_conntrack_rtsp rtsp/nf_nat_rtsp,+kmod-ipt-conntrack-extra +kmod-ipt-nat))
 $(eval $(call BuildTemplate,proto,PROTO,xt_PROTO,xt_PROTO,))
 $(eval $(call BuildTemplate,psd,psd,xt_psd,xt_psd,))
 $(eval $(call BuildTemplate,quota2,quota2,xt_quota2,xt_quota2,))
@@ -232,4 +221,3 @@ $(eval $(call BuildTemplate,tarpit,TARPIT,xt_TARPIT,xt_TARPIT,))
 $(eval $(call BuildPackage,iptaccount))
 $(eval $(call BuildPackage,iptasn))
 $(eval $(call BuildPackage,iptgeoip))
-$(eval $(call KernelPackage,nf-nathelper-rtsp))
