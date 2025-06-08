@@ -19,6 +19,8 @@ PKG_LICENSE:=GPL-2.0
 PKG_CPE_ID:=cpe:/a:netcat:netcat
 PKG_INSTALL:=1
 
+TARGET_CFLAGS += $(FPIC) -std=gnu17
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/netcat
