@@ -18,6 +18,8 @@ PKG_LICENSE:=GPL-2.0-or-later
 PKG_LICENSE_FILES:=COPYING
 PKG_CPE_ID:=cpe:/a:crun_project:crun
 
+TARGET_CFLAGS += $(FPIC) -std=gnu17
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/crun
