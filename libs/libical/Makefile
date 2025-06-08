@@ -21,6 +21,7 @@ PKG_LICENSE_FILES:=COPYING
 PKG_CPE_ID:=cpe:/a:libical_project:libical
 
 CMAKE_INSTALL:=1
+TARGET_CFLAGS += $(FPIC) -std=gnu17
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
