@@ -23,6 +23,8 @@ PKG_LICENSE_FILES:=COPYING COPYRIGHT
 PKG_FIXUP:=autoreconf
 PKG_CHECK_FORMAT_SECURITY:=0
 
+TARGET_CFLAGS += $(FPIC) -std=gnu17
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/rrdtool1/Default
