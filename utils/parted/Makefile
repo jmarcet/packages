@@ -22,6 +22,8 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_PARTED_LVM2 \
 	CONFIG_PARTED_READLINE
 
+TARGET_CFLAGS += $(FPIC) -std=gnu17
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/libparted
