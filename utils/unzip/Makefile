@@ -24,6 +24,8 @@ PKG_CPE_ID:=cpe:/a:info-zip:unzip
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)/unzip$(PKG_REV)
 PKG_CHECK_FORMAT_SECURITY:=0
 
+TARGET_CFLAGS += $(FPIC) -std=gnu17
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/unzip
