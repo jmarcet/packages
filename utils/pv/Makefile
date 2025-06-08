@@ -21,6 +21,8 @@ PKG_MAINTAINER:=
 
 PKG_INSTALL:=1
 
+TARGET_CFLAGS += $(FPIC) -std=gnu17
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/pv
