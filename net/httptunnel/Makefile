@@ -18,6 +18,8 @@ PKG_FIXUP:=autoreconf
 PKG_REMOVE_FILES:=autogen.sh
 PKG_INSTALL:=1
 
+TARGET_CFLAGS += $(FPIC) -std=gnu17
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/httptunnel
