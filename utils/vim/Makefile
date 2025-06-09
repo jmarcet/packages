@@ -25,6 +25,8 @@ PKG_CPE_ID:=cpe:/a:vim:vim
 
 PKG_BUILD_PARALLEL:=1
 
+TARGET_CFLAGS += $(FPIC) -std=gnu17
+
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/host-build.mk
 
