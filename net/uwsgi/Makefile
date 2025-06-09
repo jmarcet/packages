@@ -23,6 +23,8 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_uwsgi-python3-plugin \
 	CONFIG_PACKAGE_uwsgi-luci-support
 
+TARGET_CFLAGS += $(FPIC) -std=gnu17
+
 include ../../lang/python/pypi.mk
 include $(INCLUDE_DIR)/package.mk
 include ../../lang/python/python3-package.mk
