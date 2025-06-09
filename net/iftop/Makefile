@@ -13,6 +13,8 @@ PKG_LICENSE:=GPL-2.0
 
 PKG_FIXUP:=autoreconf
 
+TARGET_CFLAGS += $(FPIC) -std=gnu17
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/iftop
