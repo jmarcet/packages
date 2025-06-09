@@ -1,0 +1,10 @@
+--- ./src/iptraf-ng-compat.h-orig	2020-07-21 14:10:43.000000000 +0200
++++ ./src/iptraf-ng-compat.h	2025-06-09 12:49:00.001925455 +0200
+@@ -15,6 +15,7 @@
+ #include <curses.h>
+ #include <panel.h>
+ #include <assert.h>
++#include <stdbool.h>
+ #include <stddef.h>
+ #include <poll.h>
+ #include <limits.h>
