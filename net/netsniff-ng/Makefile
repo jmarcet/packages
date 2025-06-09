@@ -19,6 +19,8 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_mausezahn \
 	CONFIG_PACKAGE_netsniff-ng
 
+TARGET_CFLAGS += $(FPIC) -std=gnu17
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/netsniff-ng/Default
