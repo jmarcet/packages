@@ -15,7 +15,7 @@ PKG_HASH:=c1cf549c2ec3cf39eb5ec7bf15731349e61b26a21b5e963922db422333bae197
 
 PKG_MAINTAINER:=Ted Hess <thess@kitschensync.net>
 
-PKG_BUILD_FLAGS:=no-mips16
+PKG_BUILD_FLAGS:=no-lto no-mips16
 
 PKG_BUILD_DEPENDS:=!USE_GLIBC:argp-standalone
 PKG_CONFIG_DEPENDS:= \
