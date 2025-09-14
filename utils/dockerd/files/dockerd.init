@@ -49,8 +49,7 @@ boot() {
 	done
 	test -f /etc/rc.dockerd && sh /etc/rc.dockerd &
 	while ! /etc/init.d/dnsmasq running; do sleep 1; done
-	while ! mountpoint -q /sys/fs/cgroup; do sleep 1; done
-	[ $( grep '^cgroup ' /proc/mounts | wc -l ) -lt 15 ] && return
+	while ! /etc/init.d/unbound running; do sleep 1; done
 	rc_procd start_service
 }
 
