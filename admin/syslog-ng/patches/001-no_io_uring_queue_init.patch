@@ -1,0 +1,21 @@
+--- ./lib/ivykis/configure-orig	2025-09-30 12:37:02.000000000 +0200
++++ ./lib/ivykis/configure	2025-10-04 21:05:34.039399919 +0200
+@@ -14406,12 +14406,12 @@ then :
+ 
+ fi
+ 
+-ac_fn_c_check_func "$LINENO" "io_uring_queue_init" "ac_cv_func_io_uring_queue_init"
+-if test "x$ac_cv_func_io_uring_queue_init" = xyes
+-then :
+-  printf "%s\n" "#define HAVE_IO_URING_QUEUE_INIT 1" >>confdefs.h
+-
+-fi
++# ac_fn_c_check_func "$LINENO" "io_uring_queue_init" "ac_cv_func_io_uring_queue_init"
++# if test "x$ac_cv_func_io_uring_queue_init" = xyes
++# then :
++#   printf "%s\n" "#define HAVE_IO_URING_QUEUE_INIT 1" >>confdefs.h
++#
++# fi
+ 
+ ac_fn_c_check_func "$LINENO" "kqueue" "ac_cv_func_kqueue"
+ if test "x$ac_cv_func_kqueue" = xyes
