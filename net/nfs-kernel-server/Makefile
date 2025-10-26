@@ -140,8 +140,6 @@ ifeq ($(BUILD_VARIANT),v4)
 	CONFIGURE_ARGS += \
 	--enable-nfsdcld \
 	--enable-nfsv4server \
-	--disable-ldap \
-	--disable-gss \
 	--enable-nfsv4 \
 	--enable-nfsv41 \
 	--enable-nfsv42
@@ -164,7 +162,6 @@ HOST_CFLAGS += -Dlinux \
 
 HOST_CONFIGURE_ARGS += \
 	--disable-gss \
-	--disable-ldap \
 	--disable-nfsrahead \
 	--disable-nfsdctl \
 	--without-tcp-wrappers \
