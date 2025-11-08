@@ -1,12 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=btrbk
-PKG_VERSION:=0.32.6
+PKG_VERSION:=0.33.0-dev
 PKG_RELEASE:=1
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
-PKG_SOURCE_URL:=https://digint.ch/download/btrbk/releases/
-PKG_HASH:=02e2ac647c918463202cbe607bb95557a4f7fd237069124333c54da5b2bbb76b
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://github.com/digint/btrbk.git
+PKG_SOURCE_VERSION:=ba3c36c984bafda41c32623a645096780eb724d9
+PKG_MIRROR_HASH:=20526a130bc5af99616ca99cff707331cc78230abdbb5825c04190889fa8c209
 
 PKG_MAINTAINER:=Javier Marcet <javier@marcet.info>
 PKG_LICENSE:=GPL-3.0-or-later
