@@ -51,6 +51,8 @@ boot() {
 	while ! /etc/init.d/dnsmasq running; do sleep 1; done
 	while ! /etc/init.d/unbound running; do sleep 1; done
 	rc_procd start_service
+	while ! test -e /var/run/docker.sock; do sleep 1; done
+	chmod o+rw /var/run/docker.sock
 }
 
 uciadd() {
