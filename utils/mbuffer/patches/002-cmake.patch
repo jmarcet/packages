@@ -1,0 +1,11 @@
+--- ./CMakeLists.txt-orig	2023-02-27 20:18:52.000000000 +0100
++++ ./CMakeLists.txt	2025-11-29 19:24:48.137894959 +0100
+@@ -17,7 +17,7 @@
+ #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ #
+ 
+-cmake_minimum_required(VERSION 3.1.0)
++cmake_minimum_required(VERSION 3.10.0)
+ 
+ include(CheckStructHasMember)
+ include(CheckLibraryExists)
