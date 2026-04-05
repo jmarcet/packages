@@ -57,6 +57,23 @@ define Build/Install
 		install
 endef
 
+define Build/Prepare
+	$(call Build/Prepare/Default)
+	rm -rf $(PKG_BUILD_DIR)/extensions/LUA/*
+	# 1. Comment out the kernel module in Kbuild
+	sed -E -i -e 's:^(obj-..build_LUA.+):#\1:' $(PKG_BUILD_DIR)/extensions/Kbuild
+	# 2. Remove LUA from the user-space subdirectories list in the Makefile
+	# We use || true because the file might be in different states depending on the build stage
+	[ -f $(PKG_BUILD_DIR)/extensions/Makefile ] && sed -i 's/\bLUA\b//g' $(PKG_BUILD_DIR)/extensions/Makefile || true
+	# 3. DO NOT rm -rf the directory yet; instead, just empty the Makefile inside it
+	# This satisfies the "make" call if something still tries to enter the folder
+	if [ -d $(PKG_BUILD_DIR)/extensions/LUA ]; then \
+		echo "all:" > $(PKG_BUILD_DIR)/extensions/LUA/Makefile; \
+		echo "install:" >> $(PKG_BUILD_DIR)/extensions/LUA/Makefile; \
+		echo "clean:" >> $(PKG_BUILD_DIR)/extensions/LUA/Makefile; \
+	fi
+endef
+
 # 1: extension/module suffix used in package name
 # 2: extension/module display name used in package title/description
 # 3: list of extensions to package
