@@ -1239,9 +1239,8 @@ f_switch() {
 		# resume via external DNS bridge
 		#
 		if [ "${adb_nftbridge}" = "1" ] && "${adb_nftcmd}" list chain inet adblock dns-bridge >/dev/null 2>&1; then
-			if "${adb_nftcmd}" flush chain inet adblock dns-bridge 2>>"${adb_errorlog}"; then
-				done="nft"
-			fi
+			"${adb_nftcmd}" flush chain inet adblock dns-bridge 2>>"${adb_errorlog}"
+			[ "${?}" = "0" ] && done="nft"
 			f_count "final" "${adb_finaldir}/${adb_dnsfile}"
 
 		# resume via local DNS
@@ -1827,43 +1826,44 @@ f_report() {
 			#
 			"${adb_awkcmd}" '
 				{
-					if (NF < 7) {
-						next
-					}
 					client = $3
+					iface = $4
+					qtype = $5
 					domain = $6
 					rc = $7
-
-					if (domain == "" || domain == "-") {
-						next
-					}
-
-					sub(/[\.]+$/, "", domain)
+					# normalize domain
+					gsub(/[\.]+$/, "", domain)
 					domain = tolower(domain)
-
+					# total client counter
 					clients[client]++
+					# remember OK per domain
 					if (rc == "OK") {
-						ok_domain[domain]++
+						ok_domain[domain] = 1
+						ok_rr[domain SUBSEP qtype] = 1
 					}
-					else if (rc == "NX") {
+					# remember NX per domain
+					if (rc == "NX") {
 						nx_domain[domain]++
+						nx_rr[domain SUBSEP qtype]++
 					}
+					# total queries per domain
 					all_domain[domain]++
 				}
-			END {
-				for (c in clients) {
-					printf "%d %s\n", clients[c], c > "'"${top_tmpclients}"'"
-				}
-				for (d in all_domain) {
-					if (d in ok_domain) {
-						printf "%d %s\n", ok_domain[d], d > "'"${top_tmpdomains}"'"
+				END {
+					# top clients
+					for (c in clients)
+						printf "%d %s\n", clients[c], c > "'"${top_tmpclients}"'"
+					# domains & blocked domains
+					for (d in all_domain) {
+					if (ok_domain[d]) {
+						printf "%d %s\n", all_domain[d], d > "'"${top_tmpdomains}"'"
+						continue
 					}
-					if (d in nx_domain) {
+					if (nx_domain[d]) {
 						printf "%d %s\n", nx_domain[d], d > "'"${top_tmpblocked}"'"
 					}
 				}
-			}
-			' "${report_srt}"
+			}' "${report_srt}"
 
 			# build json top lists
 			#
