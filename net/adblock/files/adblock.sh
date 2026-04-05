@@ -106,11 +106,11 @@ f_load() {
 	# load adblock config and set debug log file
 	#
 	f_conf
-	if [ "${adb_debug}" = "1" ] && [ -d "${adb_basedir}" ]; then
+	if [ "${adb_debug}" = "1" ]; then
 		adb_errorlog="${adb_basedir}/adb_error.log"
 		: > "${adb_errorlog}"
 	else
-		adb_errorlog="/dev/null"
+		rm -f "${adb_errorlog}"
 	fi
 
 	# fetch installed packages amd system information
@@ -131,6 +131,18 @@ f_load() {
 		[ "${core}" = "0" ] && core="1"
 		adb_cores="$((cpu * core))"
 		[ "${adb_cores}" -gt "16" ] && adb_cores="16"
+	fi
+
+	# check if adblock is enabled
+	#
+	if [ "${adb_enabled}" = "0" ]; then
+		f_extconf
+		f_temp
+		f_nftremove
+		f_rmdns
+		f_jsnup "disabled"
+		f_log "info" "adblock is currently disabled, please set the config option 'adb_enabled' to '1' to use this service"
+		exit 0
 	fi
 
 	# load dns backend and fetch utility
@@ -464,17 +476,6 @@ f_dns() {
 		fi
 	fi
 
-	# check if adblock is enabled
-	#
-	if [ "${adb_enabled}" = "0" ]; then
-		f_temp
-		f_nftremove
-		f_rmdns
-		f_jsnup "disabled"
-		f_log "info" "adblock is currently disabled, please set the config option 'adb_enabled' to '1' to use this service"
-		exit 0
-	fi
-
 	f_log "debug" "f_dns    ::: dns: ${adb_dns}, dns_instance: ${adb_dnsinstance}, dns_user: ${adb_dnsuser}, dns_dir: ${adb_dnsdir}, backup_dir: ${adb_backupdir}, final_dir: ${adb_finaldir}"
 }
 
@@ -550,7 +551,7 @@ f_temp() {
 #
 f_rmtemp() {
 	[ -f "${adb_errorlog}" ] && [ ! -s "${adb_errorlog}" ] && rm -f "${adb_errorlog}"
-	[ -d "${adb_tmpdir}" ] && rm -rf "${adb_tmpdir}"
+	rm -rf "${adb_tmpdir}"
 	: >"${adb_pidfile}"
 }
 
@@ -560,7 +561,7 @@ f_rmdns() {
 	printf "%b" "${adb_dnsheader}" >"${adb_finaldir}/${adb_dnsfile}"
 	f_dnsup
 	f_rmtemp
-	if [ -d "${adb_backupdir}" ] && { [ "${adb_action}" = "stop" ] || [ "${adb_enabled}" = "0" ]; }; then
+	if [ "${adb_action}" = "stop" ] || [ "${adb_enabled}" = "0" ]; then
 		"${adb_findcmd}" "${adb_backupdir}" -maxdepth 1 -type f -name '*.gz' -exec rm -f {} +
 	fi
 }
@@ -783,7 +784,7 @@ f_nftadd() {
 	#
 	if [ "${adb_nftallow}" = "0" ] && [ "${adb_nftblock}" = "0" ] \
 		&& [ "${adb_nftremote}" = "0" ] && [ "${adb_nftforce}" = "0" ] \
-		&& [ "${adb_nftbridge}" = "0" ]; then
+		&& [ "${adb_nftbridging}" = "0" ]; then
 		return
 	fi
 
@@ -1398,7 +1399,7 @@ f_jsnup() {
 	json_add_string "dns_backend" "${adb_dns:-"-"} (${dns_ver:-"-"}), ${adb_finaldir:-"-"}, ${dns_mem:-"0"} MB"
 	json_add_string "run_ifaces" "trigger: ${adb_trigger:-"-"}, report: ${adb_repiface:-"-"}"
 	json_add_string "run_information" "base: ${adb_basedir}, dns: ${adb_dnsdir}, backup: ${adb_backupdir}, report: ${adb_reportdir}, error: ${adb_errorlog}"
-	json_add_string "run_flags" "shift: $(f_char ${adb_dnsshift}), custom feed: $(f_char ${custom_feed}), ext. DNS (std/prot/remote/bridge): $(f_char ${nft_unfiltered})/$(f_char ${nft_filtered})/$(f_char ${nft_remote})/$(f_char ${nft_bridge}), force: $(f_char ${nft_force}), flush: $(f_char ${adb_dnsflush}), tld: $(f_char ${adb_tld}), search: $(f_char ${adb_safesearch}), report: $(f_char ${adb_report}), mail: $(f_char ${adb_mail}), jail: $(f_char ${jail}), debug: $(f_char ${adb_debug})"
+	json_add_string "run_flags" "shift: $(f_char ${adb_dnsshift}), custom feed: $(f_char ${custom_feed}), ext. DNS (std/prot/remote/bridge): $(f_char ${nft_unfiltered})/$(f_char ${nft_filtered})/$(f_char ${nft_remote})/$(f_char ${nft_bridge}), force: $(f_char ${nft_force}), flush: $(f_char ${adb_dnsflush}), tld: $(f_char ${adb_tld}), search: $(f_char ${adb_safesearch}), report: $(f_char ${adb_report}), mail: $(f_char ${adb_mail}), jail: $(f_char ${jail})"
 	json_add_string "last_run" "${runtime:-"-"}"
 	json_add_string "system_info" "cores: ${adb_cores}, fetch: ${adb_fetchcmd##*/}, ${adb_sysver}"
 	json_dump >"${adb_rtfile}"
