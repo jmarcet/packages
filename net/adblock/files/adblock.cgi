@@ -177,7 +177,7 @@ function stopRefresh() {
 if [ "${nft_remote}" != "1" ] || [ -z "${nft_macremote}" ]; then
 	printf '%s\n' "
 		<div class=\"msg err\">
-			Adblock Remote Allow is not enabled or no MAC addresses configured
+			Remote allow is not enabled or no MAC addresses configured
 		</div>
 	</div></body></html>"
 	exit 0
@@ -185,7 +185,7 @@ fi
 if [ -z "${query_mac}" ]; then
 	printf '%s\n' "
 		<div class=\"msg err\">
-			MAC address could not be determined
+			Could not determine MAC address
 		</div>
 	</div></body></html>"
 	exit 0
