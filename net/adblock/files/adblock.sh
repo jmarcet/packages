@@ -1468,7 +1468,7 @@ f_search() {
 		[ "${res}" != "true" ] && printf '%s\n\n' "  - no match" >>"${tmp_result}"
 	fi
 	"${adb_mvcmd}" -f "${tmp_result}" "${result}"
-	"${adb_catcmd}" "${result}" 2>>"${adb_errorlog}"
+	printf '%s\n' "$(< "${result}")"
 }
 
 # update runtime information
@@ -2213,7 +2213,7 @@ f_report() {
 				jsn="$("${adb_catcmd}" ${report_jsn} ${map_jsn} 2>>"${adb_errorlog}")"
 				[ -n "${jsn}" ] && printf '[%s]]\n' "${jsn}"
 			else
-				jsn="$("${adb_catcmd}" "${report_jsn}" 2>>"${adb_errorlog}")"
+				jsn="$(< "${report_jsn}")" 2>>"${adb_errorlog}"
 				[ -n "${jsn}" ] && printf '[%s]\n' "${jsn}"
 			fi
 			;;
