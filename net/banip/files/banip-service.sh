@@ -153,6 +153,7 @@ for feed in allowlist ${ban_feed} blocklist; do
 done
 wait
 f_rmset
+f_rmdir "${ban_tmpdir}"
 f_genstatus "active"
 
 # start domain lookup
@@ -175,7 +176,6 @@ f_log "info" "finish banIP processing"
 		f_mail
 	fi
 	json_cleanup
-	f_rmdir "${ban_tmpdir}"
 	rm -rf "${ban_lock}"
 ) &
 
