@@ -63,15 +63,14 @@ for feed in allowlist ${ban_feed} blocklist; do
 	# skip external feeds in allowlistonly mode
 	#
 	if [ "${ban_allowlistonly}" = "1" ]; then
-		case " ${ban_feedin} " in
+		case "${ban_feedin}" in
 		*" allowlist "*) ;;
 
 		*)
-			case " ${ban_feedout} " in
+			case "${ban_feedout}" in
 			*" allowlist "*) ;;
 
 			*)
-				f_log "info" "skip feed '${feed}' in allowlistonly mode"
 				continue
 				;;
 			esac
