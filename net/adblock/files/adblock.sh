@@ -76,7 +76,6 @@ adb_repchunkcnt="5"
 adb_repchunksize="1"
 adb_represolve="0"
 adb_lookupdomain="localhost"
-adb_srtmem="8"
 adb_action="${1}"
 adb_packages=""
 adb_cnt=""
@@ -103,24 +102,10 @@ f_cmd() {
 	fi
 }
 
-# determine available system memory (MemAvailable) in MB
-# mode "float" returns MiB with two decimals, default is integer MiB
-#
-f_mem() {
-	local mem mode="${1}"
-
-	if [ "${mode}" = "float" ]; then
-		mem="$("${adb_awkcmd}" '/^MemAvailable/{printf "%.2f", $2/1024}' "/proc/meminfo" 2>>"${adb_errorlog}")"
-	else
-		mem="$("${adb_awkcmd}" '/^MemAvailable/{printf "%s", int($2/1024)}' "/proc/meminfo" 2>>"${adb_errorlog}")"
-	fi
-	printf '%s' "${mem:-"0"}"
-}
-
 # load adblock environment
 #
 f_load() {
-	local cnt bg_pid port filter tcpdump_filter free_mem mem_cores
+	local cnt bg_pid port filter tcpdump_filter cpu
 
 	# load adblock config and set debug log file
 	#
@@ -140,19 +125,13 @@ f_load() {
 		"${adb_jsoncmd}" -ql1 -e '@.model' -e '@.release.target' -e '@.release.distribution' -e '@.release.version' -e '@.release.revision' |
 		"${adb_awkcmd}" 'BEGIN{RS="";FS="\n"}{printf "%s, %s, %s %s (%s)",$1,$2,$3,$4,$5}')"
 
-	# detect cpu cores and available memory for memory-aware parallel processing
+	# detect cpu cores for parallel processing
 	#
-	[ -z "${adb_cores}" ] && adb_cores="$("${adb_grepcmd}" -cm16 '^processor' /proc/cpuinfo 2>>"${adb_errorlog}")"
-	case "${adb_cores}" in 0 | *[!0-9]*) adb_cores="1" ;; esac
-	free_mem="$(f_mem)"
-	mem_cores="$((${free_mem} / 48))"
-	[ "${mem_cores}" -lt "1" ] && mem_cores="1"
-	[ "${adb_cores}" -gt "1" ] && [ "${mem_cores}" -lt "${adb_cores}" ] && adb_cores="${mem_cores}"
-
-	# allocate at least 8 MiB of memory per core for sorting
-	#
-	adb_srtmem="$((${free_mem} / 2 / ${adb_cores}))"
-	[ "${adb_srtmem}" -lt "8" ] && adb_srtmem="8"
+	if [ -z "${adb_cores}" ]; then
+		cpu="$("${adb_grepcmd}" -cm16 '^processor' /proc/cpuinfo 2>>"${adb_errorlog}")"
+		[ "${cpu}" = "0" ] && cpu="1"
+		adb_cores="${cpu}"
+	fi
 
 	# load dns backend and fetch utility
 	#
@@ -344,7 +323,7 @@ f_chkdom() {
 f_dns() {
 	local dns dns_list dns_section dns_info free_mem dir
 
-	free_mem="$(f_mem)"
+	free_mem="$("${adb_awkcmd}" '/^MemAvailable/{printf "%s",int($2/1000)}' "/proc/meminfo" 2>>"${adb_errorlog}")"
 	if [ "${adb_action}" = "boot" ] && [ -z "${adb_trigger}" ]; then
 		sleep ${adb_triggerdelay:-"5"}
 	fi
@@ -636,7 +615,7 @@ f_temp() {
 		adb_tmpdir="$(mktemp -p "${adb_basedir}" -d)"
 		adb_tmpload="$(mktemp -p "${adb_tmpdir}" -tu)"
 		adb_tmpfile="$(mktemp -p "${adb_tmpdir}" -tu)"
-		adb_srtopts="--temporary-directory=${adb_tmpdir} --compress-program=gzip --parallel=${adb_cores} --buffer-size=${adb_srtmem:-"8"}M"
+		adb_srtopts="--temporary-directory=${adb_tmpdir} --compress-program=gzip --parallel=${adb_cores}"
 	else
 		f_log "err" "the base directory '${adb_basedir}' does not exist/is not mounted yet, please create the directory or raise the 'adb_triggerdelay' to defer the adblock start"
 	fi
@@ -1681,7 +1660,7 @@ f_jsnup() {
 		dns_ver="$(printf '%s' "${adb_packages}" | "${adb_jsoncmd}" -ql1 -e "@.packages[\"${dns:-"${adb_dns}"}\"]")"
 		dns_mem="$("${adb_awkcmd}" -v mem="${dns_mem}" 'BEGIN{printf "%.2f", mem/1024}' 2>>"${adb_errorlog}")"
 	fi
-	free_mem="$(f_mem float)"
+	free_mem="$("${adb_awkcmd}" '/^MemAvailable/{printf "%.2f", $2/1024}' "/proc/meminfo" 2>>"${adb_errorlog}")"
 
 	# check for custom feed and nft rules
 	#
