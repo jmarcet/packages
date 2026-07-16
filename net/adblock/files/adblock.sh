@@ -1210,8 +1210,6 @@ f_list() {
 					"${adb_zcatcmd}" "${adb_backupdir}/safesearch.${src_name}.gz" >"${adb_tmpdir}/tmp.load.safesearch.${src_name}"
 				fi
 			fi
-			[ -s "${adb_tmpdir}/tmp.load.safesearch.${src_name}" ] &&
-				safe_domains="$(f_chkdom google 1 <"${adb_tmpdir}/tmp.load.safesearch.${src_name}")"
 			;;
 		"bing")
 			safe_cname="strict.bing.com"
