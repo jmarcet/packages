@@ -72,7 +72,6 @@ adb_geoparm=""
 adb_geourl="http://ip-api.com/json"
 adb_repiface=""
 adb_repport="53"
-adb_repfilter=""
 adb_repchunkcnt="5"
 adb_repchunksize="1"
 adb_represolve="0"
@@ -198,7 +197,6 @@ f_load() {
 				filter="${filter}(udp port ${port}) or (tcp port ${port})"
 			done
 			tcpdump_filter="(${filter}) and greater 28"
-			[ -n "${adb_repfilter}" ] && tcpdump_filter="${tcpdump_filter} and (${adb_repfilter})"
 			if [ -n "${adb_repiface}" ] && [ -d "${adb_reportdir}" ]; then
 				(
 					"${adb_dumpcmd}" --immediate-mode -nn -p -s0 -i "${adb_repiface}" \
@@ -208,11 +206,7 @@ f_load() {
 				)
 				sleep 1
 				bg_pid="$("${adb_pgrepcmd}" -nf "${adb_reportdir}/adb_report.pcap")"
-				if [ -n "${bg_pid}" ]; then
-					f_log "info" "tcpdump background process started for interface: ${adb_repiface}, port: ${adb_repport}, filter: ${adb_repfilter:-"-"}, dir: ${adb_reportdir}, pid: ${bg_pid}"
-				else
-					f_log "info" "tcpdump background process could not be started, please check the reporting filter: ${adb_repfilter:-"-"}"
-				fi
+				f_log "info" "tcpdump background process started for interface: ${adb_repiface}, port: ${adb_repport}, dir: ${adb_reportdir}, pid: ${bg_pid}"
 			else
 				f_log "info" "please set the reporting interface 'adb_repiface' and reporting directory 'adb_reportdir' manually"
 			fi
@@ -2354,7 +2348,7 @@ f_report() {
 
 			# build json request list
 			#
-			search="${search//[!a-zA-Z0-9._:-]/}"
+			search="${search//[!a-zA-Z0-9._-]/}"
 			case "${res_count}" in
 			'' | *[!0-9]*)
 				res_count="50"
