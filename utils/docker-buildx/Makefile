@@ -1,14 +1,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=buildx
-PKG_VERSION:=0.35.0
+PKG_VERSION:=0.37.1
 PKG_RELEASE:=1
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
 
 PKG_SOURCE:=$(PKG_NAME)-v$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/docker/buildx/tar.gz/v${PKG_VERSION}?
-PKG_HASH:=skip
+PKG_HASH:=c8eb34392910bf18a858d4099e841deec2f7ea433bb3ed230082f55b69f19118
 
 PKG_MAINTAINER:=Javier Marcet <javier@marcet.info>
 
