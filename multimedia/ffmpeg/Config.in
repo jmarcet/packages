@@ -179,12 +179,13 @@ config FFMPEG_LIBX264
 
 config FFMPEG_FDK_AAC
 	bool "AAC encoding via libfdk-aac"
-	depends on FFMPEG_NONFREE && !FFMPEG_GPL
+	depends on FFMPEG_NONFREE
 	default n
 	help
-	  The FDK licence is incompatible with the GPL, so this is only
-	  offered for a non-GPL, nonfree build. The native FFmpeg AAC
-	  encoder is always available.
+	  The FDK licence is incompatible with the GPL; with nonfree,
+	  FFmpeg builds it beside GPL components (libx264) all the same,
+	  and the result cannot be redistributed, as any nonfree build.
+	  The native FFmpeg AAC encoder is always available.
 
 comment "System libraries"
 
