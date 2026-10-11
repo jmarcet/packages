@@ -25,7 +25,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ffmpeg
 PKG_VERSION:=9.0.1
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://ffmpeg.org/releases/
@@ -359,6 +359,16 @@ endef
 REAL_CPU_TYPE:=$(call qstrip,$(firstword $(subst +, ,$(CONFIG_CPU_TYPE))))
 # Fixup cpu types recognized by ffmpeg configure
 REAL_CPU_TYPE:=$(subst octeonplus,octeon+,$(REAL_CPU_TYPE))
+
+# musl starts a thread with 128 KiB of stack unless a program, or a library
+# loaded with it, asks for more in its PT_GNU_STACK. The ffmpeg tool's demuxer
+# thread runs libavformat's MPEG-TS code, whose frames go past that (one
+# reserves 133 KiB), and it dies on its first packets. The libraries are
+# linked with it as well as the programs, so that whatever loads libavformat
+# gets 2 MiB too.
+ifeq ($(CONFIG_USE_MUSL),y)
+  TARGET_LDFLAGS += -Wl,-z,stack-size=2097152
+endif
 
 # Base configuration, shared by all variants.
 #
