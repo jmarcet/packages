@@ -68,6 +68,19 @@ ifeq ($(ARCH),powerpc)
   endif
 endif
 
+# x86-64 CPUs have the same names in gcc's -march and LLVM's target-cpu, so the
+# -march in CONFIG_TARGET_OPTIMIZATION, which the C and C++ code is built for,
+# is what the Rust code is built for as well, the std rust/host builds for the
+# target included. Not on i386, where the subtargets' -march go below the i586
+# rustc's i586 target takes for granted, nor on ARM, where -march names an
+# architecture rather than a CPU.
+ifeq ($(ARCH),x86_64)
+  RUSTC_TARGET_CPU:=$(patsubst -march=%,%,$(lastword $(filter -march=%,$(call qstrip,$(CONFIG_TARGET_OPTIMIZATION)))))
+  ifneq ($(RUSTC_TARGET_CPU),)
+    RUSTC_TARGET_RUSTFLAGS+=-Ctarget-cpu=$(RUSTC_TARGET_CPU)
+  endif
+endif
+
 CARGO_RUSTFLAGS+=$(RUSTC_TARGET_RUSTFLAGS)
 
 # ARM Logic
