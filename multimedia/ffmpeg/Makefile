@@ -208,6 +208,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_FFMPEG_V4L2_M2M \
 	CONFIG_FFMPEG_V4L2_REQUEST \
 	CONFIG_FFMPEG_VAAPI \
+	CONFIG_FFMPEG_LIBVPL \
 	CONFIG_FFMPEG_LIBV4L2 \
 	CONFIG_FFMPEG_TLS_NONE \
 	CONFIG_FFMPEG_TLS_GNUTLS \
@@ -302,6 +303,8 @@ $(call Package/libffmpeg/Default)
 	+FFMPEG_LIBDRM:libdrm \
 	+FFMPEG_V4L2_REQUEST:libdrm \
 	+FFMPEG_V4L2_REQUEST:libudev \
+	+FFMPEG_VAAPI:libva \
+	+FFMPEG_LIBVPL:libvpl \
 	+FFMPEG_LIBV4L2:libv4l \
 	+FFMPEG_TLS_GNUTLS:libgnutls \
 	+FFMPEG_TLS_OPENSSL:libopenssl \
@@ -316,9 +319,8 @@ $(call Package/libffmpeg/Default)
 	+FFMPEG_SHINE:shine \
 	+FFMPEG_LIBX264:libx264 \
 	+FFMPEG_FDK_AAC:fdk-aac
-  # prepared, disabled until the libva / dav1d packages exist in the feeds
-  # (the matching options in Config.in are commented out as well):
-  #	+FFMPEG_VAAPI:libva
+  # prepared, disabled until a dav1d package exists in the feeds
+  # (the matching option in Config.in is commented out as well):
   #	+FFMPEG_LIBDAV1D:libdav1d
   VARIANT:=default
   # transitional aliases for packages still depending on the now gone ones
@@ -510,10 +512,9 @@ ifeq ($(BUILD_VARIANT),default)
   # option. Kodi requires it.
   # v4l2-request/libudev: options from patches/120-v4l2-request-*.patch, see
   # the common block above.
-  # vaapi/libdav1d: literal --disable until the libva / dav1d packages exist
-  # in the feeds; then restore $(call FFMPEG_OPT,FFMPEG_VAAPI,vaapi),
-  # $(call FFMPEG_OPT,FFMPEG_LIBDAV1D,libdav1d) and, for manual component
-  # selection, --enable-hwaccel=*_vaapi / --enable-decoder=libdav1d.
+  # libdav1d: literal --disable until a dav1d package exists in the feeds;
+  # then restore $(call FFMPEG_OPT,FFMPEG_LIBDAV1D,libdav1d) and, for manual
+  # component selection, --enable-decoder=libdav1d.
   FFMPEG_CONFIGURE+= \
 	$(call FFMPEG_OPT,FFMPEG_GPL,gpl) \
 	$(call FFMPEG_OPT,FFMPEG_GPL,postproc) \
@@ -525,7 +526,8 @@ ifeq ($(BUILD_VARIANT),default)
 	$(call FFMPEG_OPT,FFMPEG_V4L2_M2M,v4l2-m2m) \
 	$(call FFMPEG_OPT,FFMPEG_V4L2_REQUEST,v4l2-request) \
 	$(call FFMPEG_OPT,FFMPEG_V4L2_REQUEST,libudev) \
-	--disable-vaapi \
+	$(call FFMPEG_OPT,FFMPEG_VAAPI,vaapi) \
+	$(call FFMPEG_OPT,FFMPEG_LIBVPL,libvpl) \
 	$(call FFMPEG_OPT,FFMPEG_LIBV4L2,libv4l2) \
 	$(call FFMPEG_OPT,FFMPEG_TLS_GNUTLS,gnutls) \
 	$(call FFMPEG_OPT,FFMPEG_TLS_OPENSSL,openssl) \
@@ -573,6 +575,9 @@ ifeq ($(BUILD_VARIANT),default)
 		$(if $(CONFIG_FFMPEG_TLS_NONE),,--enable-protocol=tls --enable-protocol=https) \
 		$(if $(CONFIG_FFMPEG_V4L2_M2M),--enable-decoder=*_v4l2m2m --enable-encoder=*_v4l2m2m) \
 		$(if $(CONFIG_FFMPEG_V4L2_REQUEST),--enable-hwaccel=*_v4l2request) \
+		$(if $(CONFIG_FFMPEG_VAAPI),--enable-hwaccel=*_vaapi --enable-encoder=*_vaapi --enable-filter=*_vaapi) \
+		$(if $(CONFIG_FFMPEG_LIBVPL),--enable-decoder=*_qsv --enable-encoder=*_qsv --enable-filter=*_qsv) \
+		$(if $(CONFIG_FFMPEG_VAAPI),--enable-filter=hwupload --enable-filter=hwdownload --enable-filter=hwmap --enable-filter=format) \
 		$(if $(CONFIG_FFMPEG_LIBOPUS),--enable-decoder=libopus --enable-encoder=libopus) \
 		$(if $(CONFIG_FFMPEG_LIBVORBIS),--enable-encoder=libvorbis) \
 		$(if $(CONFIG_FFMPEG_LIBVPX),--enable-decoder=libvpx_vp8 --enable-decoder=libvpx_vp9 --enable-encoder=libvpx_vp8 --enable-encoder=libvpx_vp9) \

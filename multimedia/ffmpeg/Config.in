@@ -71,11 +71,24 @@ config FFMPEG_V4L2_REQUEST
 	  Stateless V4L2 hardware decoding (cedrus, hantro, rkvdec, ...)
 	  exporting DRM_PRIME frames. Requires libdrm and libudev.
 
-# VA-API support is prepared but disabled until a libva package exists in
-# the feeds; uncomment (and the DEPENDS line in the Makefile) once it does.
-#config FFMPEG_VAAPI
-#	bool "VA-API hardware acceleration"
-#	default n
+config FFMPEG_VAAPI
+	bool "VA-API hardware acceleration"
+	select FFMPEG_LIBDRM
+	default n
+	help
+	  Hardware decoding, encoding and filtering through libva (from
+	  the video feed). A driver for the GPU is needed at run time,
+	  e.g. intel-media-driver for Intel GPUs from Broadwell on.
+
+config FFMPEG_LIBVPL
+	bool "Intel Quick Sync Video via libvpl"
+	depends on x86_64
+	select FFMPEG_VAAPI
+	default n
+	help
+	  The *_qsv decoders and encoders. libvpl dispatches to the GPU
+	  runtime at run time: vpl-gpu-rt for Tiger Lake and newer, which
+	  needs intel-media-driver beside it.
 
 comment "Transport layer security"
 
